@@ -23,7 +23,7 @@ http.interceptors.request.use(
     (response) => response,
     (error) => {
       const originalRequest = error.config;
-      if (error.response.status === 401 && !originalRequest.retry) {
+      if (error.response?.status === 401 && !originalRequest.retry) {
         originalRequest.retry = true;
   
         return http
