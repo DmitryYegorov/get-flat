@@ -1,24 +1,137 @@
+'use client';
+
+import useCountries from "@get-flat/app/hooks/useCountries";
+import { useRouter } from "next/navigation";
+import { useCallback, useMemo } from "react";
+import {format} from 'date-fns';
+import Image from 'next/image';
+import HeartButton from "../../HeartButton";
+import Button from "../../Button";
+
 interface Props {
     data: any;
+    onAction?: (id: string) => void;
+    reservation?: any;
+    disabled?: boolean;
+    actionLabel?: string;
+    actionId?: string;
+    currentUser?: any | null;
 }
 
 const RealtyCard: React.FC<Props> = ({
-    data
+    data,
+    onAction,
+    reservation,
+    disabled,
+    actionLabel,
+    actionId = '',
+    currentUser,
 }) => {
+
+    const router = useRouter();
+    const { getByValue } = useCountries();
+
+    const location = data.location;
+
+    const handleCansel = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+
+        if (disabled) {
+            return;
+        }
+
+        onAction?.(actionId);
+    }, [onAction, actionId, disabled]);
+
+    const price = useMemo(() => {
+        if (reservation) {
+            return reservation.totalPrice;
+        }
+        return data.price;
+    }, [data, reservation]);
+
+    let reservationDate = useMemo(() => {
+        if (!reservation) {
+            return null;
+        }
+
+        const start = new Date(reservation.startDate);
+        const end = new Date(reservation.endDate);
+
+        return `${format(start, 'PP')} - ${format(end, 'PP')}`;
+    }, [reservation]);
+
     return ( 
         <div
             className="
-                border-[1px]
-                rounded
+                col-span-1
+                cursor-pointer
             "
+            onClick={() => {
+                router.push(`/realties/${data.id}`);
+            }}
         >
-            <div>
-                <img src={data.mainPhoto} />
-                <div className="p-5 flex flex-col gap-1">
-                    <p className="font-semibold">{data.title}</p>
-                    <p className="font-light text-neutral">{data.description}</p>
-                    <p className="font-size text-lg font-bold">${data.price}</p>
+            <div
+                className="
+                    flex
+                    flex-col
+                    gap-2
+                    w-full
+                "
+            >
+                <div
+                    className="
+                        aspect-square
+                        w-full
+                        relative
+                        overflow-hidden
+                        rounded-xl
+                    "
+                >
+                    <Image
+                        src={data.mainPhoto}
+                        className="
+                            object-cover
+                            h-full
+                            w-full
+                            group-hover:scale-110
+                            transition
+                        "
+                        alt={data.title}
+                        fill
+                    />
+                    <div
+                        className="
+                            absolute
+                            top-3
+                            right-3
+                        "
+                    >
+                        <HeartButton
+                            realtyId={data.id}
+                            currentUser={currentUser}
+                        />
+                    </div>
                 </div>
+                <div className="text-xl">{data.title}</div>
+                <div
+                    className="font-semibold text-lg"
+                >{location.flag} {location?.region}, {location?.label}</div>
+                <div className="font-light text-neutral-500">{reservationDate || data.category.name}</div>
+                <div className="flex flex-row items-center gap-1">
+                    <div className="font-semibold">$ {data.price}</div>
+                    {!reservation && (
+                        <div className="font-light">- 1 ночь</div>
+                    )}
+                </div>
+                {onAction && actionLabel && (
+                    <Button
+                        disabled={disabled}
+                        small
+                        label={actionLabel}
+                        onClick={handleCansel}
+                    />
+                )}
             </div>
         </div>
      );
