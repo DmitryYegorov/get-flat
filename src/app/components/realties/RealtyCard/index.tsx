@@ -116,7 +116,7 @@ const RealtyCard: React.FC<Props> = ({
                 <div className="text-xl">{data.title}</div>
                 <div
                     className="font-semibold text-lg"
-                >{location.flag} {location?.region}, {location?.label}</div>
+                >{location?.flag} {location?.region}, {location?.label}</div>
                 <div className="font-light text-neutral-500">{reservationDate || data.category.name}</div>
                 <div className="flex flex-row items-center gap-1">
                     <div className="font-semibold">$ {data.price}</div>

@@ -14,6 +14,7 @@ import Counter from "../inputs/Counter";
 import ImagesUpload from "../inputs/ImagesUpload";
 import Input from "../inputs/Input";
 import { useRouter } from "next/navigation";
+import { TextareaAutosize, TextField } from "@mui/material";
 
 enum STEPS {
     CATEGORY = 0,
@@ -233,13 +234,18 @@ const RentModal = () => {
                     register={register}
                 />
                 <hr/>
-                <Input
+                <TextField
+                    variant="outlined"
+                    rows={7}
+                    onChange={(e) => {
+                        setCustomValue('description', e.target.value);
+                        console.log(watch('description'));
+                    }}
+                    multiline
                     id="description"
-                    label="Описание"
+                    placeholder="Описание"
                     disabled={isLoading}
-                    errors={errors}
                     required
-                    register={register}
                 />
             </div>
         );

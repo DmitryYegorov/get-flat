@@ -145,7 +145,7 @@ export default function UsersMenu() {
                             <hr/>
 
                             <MenuItem
-                                onClick={rentModal.onOpen}
+                                onClick={() => router.push('/my-realty')}
                                 label={`Моя недвижимость`}
                             />
                             <hr/>
