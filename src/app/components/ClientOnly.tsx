@@ -22,7 +22,6 @@ const ClientOnly = ({children}: Props) => {
             http.get('/users/auth/me')
                 .then((res) => {
                     const data = res.data;
-                    console.log(data);
                     authStore.onAuthorized(data.payload);
                 })
         }

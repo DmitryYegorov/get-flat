@@ -95,11 +95,9 @@ const RentModal = () => {
 
     const getCategoriesList = useCallback(async () => {
         try {
-            const res = await http.get('/realty/categories');
-            console.log(res.data);
+            const res = await http.get('/realty-categories');
             return res.data;
         } catch (err) {
-            console.log({ err });
             toast.error(err?.response?.data?.message);
         }
     }, []);
@@ -210,7 +208,6 @@ const RentModal = () => {
                 <ImagesUpload
                     onChange={(url) => {
                         setCustomValue('imageSrc', url);
-                        console.log(url);
                     }}
                     value={imageSrc}
                 />

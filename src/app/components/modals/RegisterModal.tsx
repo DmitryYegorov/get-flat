@@ -44,11 +44,9 @@ const RegisterModal = () => {
 
         http.post('/users/auth/register', data)
             .then((res) => {
-                console.log(res);
                 // registerModal.onClose();
             })
             .catch(error => {
-                console.log(error);
                 toast.error(error.response.data.message);
             })
             .finally(() => {

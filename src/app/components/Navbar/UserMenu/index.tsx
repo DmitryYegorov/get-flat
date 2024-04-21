@@ -8,12 +8,15 @@ import useRegisterModule from "@get-flat/app/hooks/useRegisterModule";
 import useLoginModal from '@get-flat/app/hooks/useLoginModal';
 import useAuth from "@get-flat/app/hooks/useAuth";
 import useRentModal from "@get-flat/app/hooks/useRentModal";
+import { useRouter } from "next/navigation";
 
 export default function UsersMenu() {
     const registerModal = useRegisterModule();
     const loginModal = useLoginModal();
     const authStore = useAuth();
     const rentModal = useRentModal();
+
+    const router = useRouter();
 
     const [isOpen, setOpen] = useState(false);
 
@@ -118,8 +121,8 @@ export default function UsersMenu() {
                     ) : (
                         <>
                             <MenuItem
-                                onClick={() => {} }
-                                label={`${authStore.user.fullName}`}
+                                onClick={() => router.push('/profile') }
+                                label="Профиль"
                             />
                             {(authStore.user.role === 'ADMIN' && (
                                 <MenuItem

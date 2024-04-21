@@ -41,9 +41,7 @@ const LoginModal = () => {
 
         http.post('/users/auth/login', data)
             .then((res) => {
-                console.log(res);
                 const data = res.data;
-                console.log({data});
                 const {accessToken, payload} = data;
 
                 authStore.onAuthorized(payload);

@@ -39,7 +39,6 @@ const ImagesUpload: React.FC<Props> = ({
             <input
                 type="file"
                 onChange={(event) => {
-                    console.log(event);
                     uploadToFireBase(event.target.files![0]);
                 }}
             />
