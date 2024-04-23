@@ -1,5 +1,6 @@
 'use client';
 
+import { styled } from "@mui/material";
 import { IconType } from "react-icons";
 
 interface Props {
@@ -9,7 +10,20 @@ interface Props {
     outline?: boolean;
     small?: boolean;
     icon?: IconType;
+    type?: 'file';
 }
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
 const Button: React.FC<Props> = ({
     label,
@@ -17,7 +31,8 @@ const Button: React.FC<Props> = ({
     disabled,
     outline,
     small,
-    icon: Icon
+    icon: Icon,
+    type
 }) => {
     return ( <button
         onClick={onClick}
@@ -42,15 +57,16 @@ const Button: React.FC<Props> = ({
     >
         {Icon && (
             <Icon
-                size={24}
-                className="
+                size={small ? 16 : 24}
+                className={`
                     absolute
                     left-4
                     top-3
-                "   
+                `} 
             />
         )}
         {label}
+        {type === 'file' && (<VisuallyHiddenInput type="file" />)}
     </button> );
 }
  

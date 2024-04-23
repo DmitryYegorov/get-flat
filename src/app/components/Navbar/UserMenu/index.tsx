@@ -135,7 +135,7 @@ export default function UsersMenu() {
                                 label={`Мои поездки`}
                             />
                             <MenuItem
-                                onClick={() => {} }
+                                onClick={() => router.push('/favorites') }
                                 label={`Избранное`}
                             />
                             <MenuItem

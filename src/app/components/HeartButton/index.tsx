@@ -1,23 +1,29 @@
 'use client';
 
+import { likeRealty } from "@get-flat/app/http/realty";
+import { MouseEventHandler, useState } from "react";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 interface Props {
     realtyId: string;
-    currentUser?: any;
+    favorite?: boolean,
 }
 
 const HeartButton: React.FC<Props> = ({
     realtyId,
-    currentUser,
+    favorite,
 }) => {
 
-    const hasFavorited = true;
-    const toggleFavorite = () => {};
+    const [hasFavorite, setHasFavorite] = useState(!!favorite);
+    const toggleHandle = async (e: any) => {
+        e.stopPropagation();
+        setHasFavorite(!hasFavorite);
+        await likeRealty(realtyId);
+    }
 
     return ( 
         <div
-            onClick={toggleFavorite}
+            onClick={toggleHandle}
             className="
                 relative
                 hover:opacity-80
@@ -37,7 +43,7 @@ const HeartButton: React.FC<Props> = ({
              <AiFillHeart
                 size={24}
                 className={`
-                    ${hasFavorited ? 'fill-indigo-500' : 'fill-neutral-500/70'}
+                    ${hasFavorite ? 'fill-indigo-500' : 'fill-neutral-500/70'}
                 `}
              />
         </div>

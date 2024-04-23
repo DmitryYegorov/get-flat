@@ -1,7 +1,9 @@
+'use client';
+
 import Container from "@get-flat/app/components/Container";
 import Heading from "@get-flat/app/components/Heading";
 import Realty from './page';
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import Image from 'next/image';
 import HeartButton from "@get-flat/app/components/HeartButton";
 import { IoPerson } from "react-icons/io5";
@@ -9,6 +11,8 @@ import { Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@m
 import { MdBathroom, MdBedroomParent } from "react-icons/md";
 import Button from "@get-flat/app/components/Button";
 import { http } from "@get-flat/app/http";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 interface Props {
     realty: any;
@@ -17,20 +21,26 @@ interface Props {
 
 const ListingClient: React.FC<Props> = ({realty}) => {
 
-    const [currentUser, setCurrentUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState<any>(null);
+    const [isLiked, setIsLiked] = useState(false);
 
     useEffect(() => {
         if (!currentUser) {
             http.get('/users/auth/me')
-            .then((res) => {
-                setCurrentUser(res.data?.payload?.user);
-            })
-            .catch(() => {
-                //.. do noting
-            })
+                .then((res) => {
+                    const user = res.data?.payload?.user;
+                    if (realty.favorites.filter((f: { realtyId: any; userId: any; }) => f.realtyId === realty.id && f.userId === user.id).length) {
+                        setIsLiked(true);
+                    }
+                    setCurrentUser(user);
+                })
+                .catch(() => {
+                    //.. do noting
+                    console.log('user not loaded')
+                })
         }
 
-    }, [currentUser]);
+    }, [currentUser, isLiked, realty]);
  
     return ( 
         <Container>
@@ -47,24 +57,67 @@ const ListingClient: React.FC<Props> = ({realty}) => {
                     relative
                 "
             >
-                <Image
-                    fill
-                    src={realty.mainPhoto}
-                    alt={realty.title}
-                    className="object-cover w-full"
-                />
-                <div
-                    className="absolute top-5 right-5"
-                >
-                    <HeartButton
-                        realtyId={realty.id}
-                        currentUser={{}}
+                <div>
+                    <Image
+                        fill
+                        src={realty.mainPhoto}
+                        alt={realty.title}
+                        className="object-cover w-full"
                     />
                 </div>
+                {currentUser && (
+                    <div
+                        className="absolute top-5 right-5"
+                    >
+                        <HeartButton
+                            realtyId={realty.id}
+                            favorite={isLiked}
+                        />
+                    </div>
+                )}
             </div>
             <Grid container spacing={2} marginTop={1}>
                 <Grid item xs={8}>
                     <Paper style={{padding: 10, border: '1px solid #ececee'}} elevation={0}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                scrollSnapType: 'x mandatory',
+                                gap: 20,
+                                overflowX: 'auto'
+                            }}
+                        >  
+                        {realty.images.map((src: string) => (
+                                <div className="flex flex-row gap-2" key={src} style={{
+                                    scrollSnapAlign: 'start',
+                                    flex: '0 0 300px'
+                                }}>
+                                    <div
+                                        key={src}
+                                        className="
+                                            aspect-square
+                                            w-full
+                                            relative
+                                            overflow-hidden
+                                            rounded-xl
+                                        "
+                                    >
+                                    <Image
+                                        key={src}
+                                        fill
+                                        src={src}
+                                        alt={realty.title}
+                                        className="
+                                            object-cover
+                                            h-full
+                                            w-full
+                                        "
+                                    />
+                                </div>
+                                </div>
+                            ))}
+
+                        </div>
                         <Typography variant="body1">{realty.description}</Typography>
                     </Paper>
                 </Grid>

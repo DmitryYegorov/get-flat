@@ -7,12 +7,15 @@ import RealtyCard from "../components/realties/RealtyCard";
 import EmptyState from "../components/EmptyState";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { http } from "../http";
+import { useRouter } from "next/navigation";
 
 export default function MyRealty() {
     
   const [realties, setRealties] = useState([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const isEmpty = realties.length === 0;
+
+  const router = useRouter();
 
   useEffect(() => {
     if (!currentUser) {
@@ -61,7 +64,7 @@ export default function MyRealty() {
             <Grid item xs={8}>
                 <List>
                     {realties.map((r: any) => (
-                        <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse"> 
+                        <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                 <ListItemAvatar>
                                     <Avatar

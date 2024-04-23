@@ -9,6 +9,7 @@ import ToasterProvider from "./providers/ToasterProvider";
 import LoginModal from "./components/modals/LoginModal";
 import useAuth from "./hooks/useAuth";
 import RentModal from "./components/modals/RentModal";
+import UploadPhotos from "./components/modals/UploadPhotos";
 
 export const metadata: Metadata = {
   title: "Home.Guru",
@@ -33,6 +34,7 @@ export default function RootLayout({
           <RentModal />
           <RegisterModal />
           <LoginModal />
+          <UploadPhotos />
           <Navbar />
         </ClientOnly>
         <div className="pb-20 pt-28">

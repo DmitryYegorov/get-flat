@@ -29,7 +29,6 @@ const RealtyCard: React.FC<Props> = ({
 }) => {
 
     const router = useRouter();
-    const { getByValue } = useCountries();
 
     const location = data.location;
 
@@ -42,6 +41,22 @@ const RealtyCard: React.FC<Props> = ({
 
         onAction?.(actionId);
     }, [onAction, actionId, disabled]);
+
+    const handleLike = useCallback(async () => {
+        
+    }, []);
+
+    console.log(data.favorites.find((f: { userId: any; }) => f.userId === currentUser.id));
+
+    const isLiked = () => {
+        if (!data || !currentUser) {
+            return false;
+        }
+
+        const res = !!data.favorites.find((f: { userId: any; }) => f.userId === currentUser.id);
+        console.log({res});
+        return res;
+    };
 
     const price = useMemo(() => {
         if (reservation) {
@@ -109,7 +124,7 @@ const RealtyCard: React.FC<Props> = ({
                     >
                         <HeartButton
                             realtyId={data.id}
-                            currentUser={currentUser}
+                            favorite={isLiked()}
                         />
                     </div>
                 </div>
