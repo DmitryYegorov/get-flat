@@ -7,7 +7,7 @@ import Button from "../Button";
 interface Props {
     isOpen?: boolean;
     onClose: () => void;
-    onSubmit: () => void;
+    onSubmit: (data?: any) => void;
     title?: string;
     body?: React.ReactElement;
     footer?: React.ReactElement;

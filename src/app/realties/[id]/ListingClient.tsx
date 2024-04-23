@@ -7,22 +7,51 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "reac
 import Image from 'next/image';
 import HeartButton from "@get-flat/app/components/HeartButton";
 import { IoPerson } from "react-icons/io5";
-import { Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@mui/material";
-import { MdBathroom, MdBedroomParent } from "react-icons/md";
-import Button from "@get-flat/app/components/Button";
+import { Alert, AlertTitle, Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@mui/material";
+import { MdBathroom, MdBedroomParent, MdKitchen, MdLocalParking, MdWc } from "react-icons/md";
 import { http } from "@get-flat/app/http";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import { Carousel } from 'react-responsive-carousel';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+
+import { DateRange } from '@mui/x-date-pickers-pro/models';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import { useForm } from "react-hook-form";
+import ConfirmationDialog from '../../components/ConfirmatinoDialog';
+import {Button} from "@mui/material";
+import { indigo } from "@mui/material/colors";
+import useBooking from "@get-flat/app/hooks/useBookingModal";
+import BookingModal from "@get-flat/app/components/modals/BookingModal";
+
 
 interface Props {
     realty: any;
-    reservations?: any[]; 
+    bookings?: any[]; 
 }
 
-const ListingClient: React.FC<Props> = ({realty}) => {
+const ListingClient: React.FC<Props> = ({realty, bookings}) => {
 
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [isLiked, setIsLiked] = useState(false);
+
+    const [booking, setBooking] = useState(null);
+
+    const bookingModal = useBooking();
+
+    const {
+        setValue,
+        register,
+        handleSubmit,
+        watch
+    } = useForm({
+        defaultValues: {
+            startDate: dayjs(),
+            endDate: dayjs(),
+        }
+    });
+
+    const startDate = watch('startDate');
+    const endDate = watch('endDate');
 
     useEffect(() => {
         if (!currentUser) {
@@ -33,6 +62,15 @@ const ListingClient: React.FC<Props> = ({realty}) => {
                         setIsLiked(true);
                     }
                     setCurrentUser(user);
+
+                    if (!!bookings) {
+                        console.log(bookings);
+                        bookings.forEach(booking => {
+                            if (booking.userId === user.id) {
+                                setBooking(booking);
+                            }
+                        })
+                    }
                 })
                 .catch(() => {
                     //.. do noting
@@ -118,7 +156,7 @@ const ListingClient: React.FC<Props> = ({realty}) => {
                             ))}
 
                         </div>
-                        <Typography variant="body1">{realty.description}</Typography>
+                        <Typography variant="body1">{bookingModal.isOpen ? 'true' : 'false'} {realty.description}</Typography>
                     </Paper>
                 </Grid>
                 <Grid item xs={4}>
@@ -130,19 +168,63 @@ const ListingClient: React.FC<Props> = ({realty}) => {
                             </ListItem>
                             <ListItem>
                                 <ListItemIcon><MdBathroom /></ListItemIcon>
-                                <Typography variant="subtitle1">Количество сан. узлов: {realty.bathroomCount}</Typography>
+                                <Typography variant="subtitle1">Ванные комнаты: {realty.bathroomCount}</Typography>
                             </ListItem>
                             <ListItem>
-                                <ListItemIcon><MdBedroomParent /></ListItemIcon>
-                                <Typography variant="subtitle1">Комнаты: {realty.roomsCount}</Typography>
+                                <ListItemIcon><MdWc /></ListItemIcon>
+                                <Typography variant="subtitle1">Уборные: {realty.bathroomCount}</Typography>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon><MdKitchen /></ListItemIcon>
+                                <Typography variant="subtitle1">Отдельная кухня: {realty.hasKitchen ? 'Да' : 'Нет'}</Typography>
+                            </ListItem>
+                            <ListItem>
+                                <ListItemIcon><MdLocalParking /></ListItemIcon>
+                                <Typography variant="subtitle1">Парковка: {realty.hasParking ? 'Да' : 'Нет'}</Typography>
                             </ListItem>
                             <ListItem>
                                 {currentUser ? (
-                                    <Button
-                                        label="Забронировать"
-                                        onClick={() => {}}
-
-                                    />
+                                    (
+                                        <Stack spacing={1}>
+                                           {
+                                            booking && (
+                                                <Alert>
+                                                    <AlertTitle>У вас есть бронь</AlertTitle>
+                                                    <List>
+                                                        <ListItem>{dayjs(booking?.startDate).format('DD/MM/YYYY')} - {dayjs(booking?.endDate).format('DD/MM/YYYY')}</ListItem>
+                                                    </List>
+                                                </Alert>
+                                            )
+                                           }
+                                            <hr/>
+                                            {/* <Typography>Бронь</Typography> */}
+                                            <Stack direction={'row'} spacing={1}>
+                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                    <DateRangePicker
+                                                        localeText={{start: 'Дата въезда', end: 'Дата выезда'}}
+                                                        defaultValue={[startDate, endDate]}
+                                                        onChange={([startDate, endDate]) => {
+                                                            setValue('startDate', startDate!);
+                                                            setValue('endDate', endDate!);
+                                                        }}
+                                                    />
+                                                </LocalizationProvider>
+                                            </Stack>
+                                            <Button
+                                                variant="contained"
+                                                style={{backgroundColor: indigo[500]}}
+                                                onClick={() => {
+                                                    bookingModal.onOpen({
+                                                        realty,
+                                                        startDate,
+                                                        endDate,
+                                                        user: currentUser,
+                                                    });
+                                                    setCurrentUser(null);
+                                                }}
+                                            >Забронировать</Button>
+                                        </Stack>
+                                    )
                                 ) : (
                                     <Typography variant="caption">Для того, чтобы забронировать нужна авторизация</Typography>
                                 )}

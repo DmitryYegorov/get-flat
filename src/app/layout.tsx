@@ -10,6 +10,7 @@ import LoginModal from "./components/modals/LoginModal";
 import useAuth from "./hooks/useAuth";
 import RentModal from "./components/modals/RentModal";
 import UploadPhotos from "./components/modals/UploadPhotos";
+import BookingModal from "./components/modals/BookingModal";
 
 export const metadata: Metadata = {
   title: "Home.Guru",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className={font.className}>
         <ClientOnly>
           <ToasterProvider />
+          <BookingModal />
           <RentModal />
           <RegisterModal />
           <LoginModal />

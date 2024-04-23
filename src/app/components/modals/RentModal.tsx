@@ -14,7 +14,7 @@ import Counter from "../inputs/Counter";
 import ImagesUpload from "../inputs/ImagesUpload";
 import Input from "../inputs/Input";
 import { useRouter } from "next/navigation";
-import { TextareaAutosize, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, TextareaAutosize, TextField } from "@mui/material";
 
 enum STEPS {
     CATEGORY = 0,
@@ -53,6 +53,9 @@ const RentModal = () => {
             price: 1,
             title: '',
             description: '',
+            wcCount: 1,
+            hasKitchen: false,
+            hasParking: false,
         }
     });
 
@@ -62,6 +65,9 @@ const RentModal = () => {
     const roomCount = watch('roomCount');
     const bathroomCount = watch('bathroomCount');
     const imageSrc = watch('imageSrc');
+    const wcCount = watch('wcCount');
+    const hasKitchen = watch('hasKitchen');
+    const hasParking = watch('hasParking');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -190,11 +196,29 @@ const RentModal = () => {
                 />
                 <hr/>
                 <Counter
-                    title="Ванная компанат"
+                    title="Ванные комнаты"
                     subtitle="Сколько у вас отдельных ванных комнат или душевых?"
                     value={bathroomCount}
                     onChange={(value) => setCustomValue('bathroomCount', value)}
                 />
+                <hr/>
+                <Counter
+                    title="Туалеты"
+                    subtitle="Сколько у вас туалетов?"
+                    value={wcCount}
+                    onChange={(value) => setCustomValue('wcCount', value)}
+                />
+                {/* <hr/>
+                <Counter
+                    title="Сан. узел раздельный"
+                    subtitle="Сколько у вас туалетов?"
+                    value={wcCount}
+                    onChange={(value) => setCustomValue('wcCount', value)}
+                /> */}
+                <hr/>
+                <FormControlLabel control={<Checkbox defaultChecked={hasKitchen} onChange={(e) => setCustomValue('hasKitchen', e.target.checked)}/>} label="Отдельная кухня" />
+                <hr/>
+                <FormControlLabel control={<Checkbox defaultChecked={hasParking} onChange={(e) => setCustomValue('hasParking', e.target.checked)}/>} label="Предоставление паркового места" />
             </div>
         );
     }

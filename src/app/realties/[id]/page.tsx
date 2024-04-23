@@ -13,11 +13,13 @@ export default function Realty({ params }) {
     const router = useRouter();
 
     const [realty, setRealty] = useState(null);
+    const [booking, setBooking] = useState(null)
     
     useEffect(() => {
         http.get(`/realty/${params.id}`)
             .then(res => {
-                setRealty(res.data);
+                const realty = res.data;
+                setRealty(realty);
             })
     }, [params.id]);
 
@@ -27,7 +29,7 @@ export default function Realty({ params }) {
 
     return (
         <ClientOnly>
-            <ListingClient realty={realty}/>
+            <ListingClient realty={realty} bookings={realty.bookings}/>
         </ClientOnly>
     );
 }
