@@ -7,32 +7,48 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "reac
 import Image from 'next/image';
 import HeartButton from "@get-flat/app/components/HeartButton";
 import { IoPerson } from "react-icons/io5";
-import { Alert, AlertTitle, Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@mui/material";
+import { Alert, AlertTitle, Box, Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@mui/material";
 import { MdBathroom, MdBedroomParent, MdKitchen, MdLocalParking, MdWc } from "react-icons/md";
 import { http } from "@get-flat/app/http";
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
-import { DateRange } from '@mui/x-date-pickers-pro/models';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+// import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs, { Dayjs, locale } from 'dayjs';
 import { useForm } from "react-hook-form";
-import ConfirmationDialog from '../../components/ConfirmatinoDialog';
 import {Button} from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import useBooking from "@get-flat/app/hooks/useBookingModal";
-import BookingModal from "@get-flat/app/components/modals/BookingModal";
+import 'rsuite/dist/rsuite.min.css';
+import ruRu from 'rsuite/locales/ru_RU'
 
+
+import { CustomProvider, DateRangePicker } from 'rsuite';
+const { allowedMaxDays, allowedDays, allowedRange, beforeToday, afterToday, combine } =
+  DateRangePicker;
 
 interface Props {
     realty: any;
     bookings?: any[]; 
 }
 
+function getDatesInRange(startDate: Date, endDate: Date): Date[] {
+    const dateArray = [];
+    let currentDate = new Date(startDate.getTime());
+
+    while (currentDate <= endDate) {
+        dateArray.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return dateArray;
+}
+
 const ListingClient: React.FC<Props> = ({realty, bookings}) => {
 
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [isLiked, setIsLiked] = useState(false);
+    const [booked, setBooked] = useState<Date[]>([]);
 
     const [booking, setBooking] = useState(null);
 
@@ -45,8 +61,8 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
         watch
     } = useForm({
         defaultValues: {
-            startDate: dayjs(),
-            endDate: dayjs(),
+            startDate: new Date(),
+            endDate: new Date(),
         }
     });
 
@@ -54,6 +70,12 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
     const endDate = watch('endDate');
 
     useEffect(() => {
+
+        realty?.bookings?.forEach((booking) => {
+            setBooked([...booked, ...getDatesInRange(new Date(booking.startDate), new Date(booking.endDate))]);
+            console.log(booked);
+        })
+
         if (!currentUser) {
             http.get('/users/auth/me')
                 .then((res) => {
@@ -63,13 +85,12 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                     }
                     setCurrentUser(user);
 
-                    if (!!bookings) {
-                        console.log(bookings);
+                    if (bookings) {
                         bookings.forEach(booking => {
                             if (booking.userId === user.id) {
                                 setBooking(booking);
                             }
-                        })
+                        });
                     }
                 })
                 .catch(() => {
@@ -182,7 +203,8 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                 <ListItemIcon><MdLocalParking /></ListItemIcon>
                                 <Typography variant="subtitle1">Парковка: {realty.hasParking ? 'Да' : 'Нет'}</Typography>
                             </ListItem>
-                            <ListItem>
+                            </List>
+                            <Box>
                                 {currentUser ? (
                                     (
                                         <Stack spacing={1}>
@@ -199,16 +221,25 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                             <hr/>
                                             {/* <Typography>Бронь</Typography> */}
                                             <Stack direction={'row'} spacing={1}>
-                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                    <DateRangePicker
-                                                        localeText={{start: 'Дата въезда', end: 'Дата выезда'}}
-                                                        defaultValue={[startDate, endDate]}
-                                                        onChange={([startDate, endDate]) => {
-                                                            setValue('startDate', startDate!);
-                                                            setValue('endDate', endDate!);
-                                                        }}
-                                                    />
-                                                </LocalizationProvider>
+                                                <CustomProvider locale={ruRu}>
+                                                <DateRangePicker
+                                                    defaultCalendarValue={[startDate, endDate]}
+                                                    onChange={(value) => {
+                                                        const [startDate, endDate] = value!;
+                                                        setValue('startDate', startDate);
+                                                        setValue('endDate', endDate);
+                                                    }}
+                                                    format="dd/MM/yyyy"
+                                                    appearance="subtle"
+                                                    placement="top"
+                                                    shouldDisableDate={(date) => {
+                                                        const formatted = booked.map(b => dayjs(b).format('YYYY-MM-DD'));
+                                                        // console.log({formatted});
+                                                        const res = formatted.includes(dayjs(date).format('YYYY-MM-DD'));
+                                                        return res;
+                                                    }}
+                                                />
+                                                </CustomProvider>
                                             </Stack>
                                             <Button
                                                 variant="contained"
@@ -228,8 +259,7 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                 ) : (
                                     <Typography variant="caption">Для того, чтобы забронировать нужна авторизация</Typography>
                                 )}
-                            </ListItem>
-                        </List>
+                            </Box>
                     </Paper>
                 </Grid>
             </Grid>

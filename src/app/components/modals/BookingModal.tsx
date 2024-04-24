@@ -20,6 +20,7 @@ import useBooking from '@get-flat/app/hooks/useBookingModal';
 import { List, ListItem, ListItemIcon, Typography } from '@mui/material';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { endOfDay, format } from 'date-fns';
+import dayjs from 'dayjs';
 
 interface Props {
     onBook: (data?: any) => void;
@@ -69,11 +70,11 @@ const BookingModal = ({onBook}: Props) => {
             <List style={{minWidth: 400, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                 <ListItem>
                     <ListItemIcon><AiOutlineArrowLeft size={18} /></ListItemIcon>
-                    <ListItem>Въезд {bookingModal.startDate.format('DD/MM/YYYY')}</ListItem>
+                    <ListItem>Въезд {dayjs(bookingModal.startDate).format('DD/MM/YYYY')}</ListItem>
                 </ListItem>
                 <ListItem>
                     <ListItemIcon><AiOutlineArrowLeft size={18} /></ListItemIcon>
-                    <ListItem>Выезд {bookingModal.endDate.format('DD/MM/YYYY')}</ListItem>
+                    <ListItem>Выезд {dayjs(bookingModal.endDate).format('DD/MM/YYYY')}</ListItem>
                 </ListItem>
                 <ListItem>
                     {bookingModal.realty?.location?.flag} {bookingModal.realty?.location?.label}, {bookingModal.realty?.location?.region}
