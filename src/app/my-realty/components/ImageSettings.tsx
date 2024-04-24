@@ -83,26 +83,4 @@ const ImageSettings: React.FC<Props> = ({
      );
 }
 
-const ContextMenu = () => {
-    return (
-        <PopupState variant="popover" popupId="demo-popup-menu">
-        {(popupState) => (
-            <React.Fragment>
-            <div
-                className='cursor-pointer'
-                {...bindTrigger(popupState)}
-            >
-                <Image src={src} width={300} height={300} alt={isMain ? "Главное фото" : 'Photo'}/>
-            </div>
-            <Menu {...bindMenu(popupState)}>
-                <MenuItem onClick={popupState.close}>Profile</MenuItem>
-                <MenuItem onClick={popupState.close}>My account</MenuItem>
-                <MenuItem onClick={popupState.close}>Logout</MenuItem>
-            </Menu>
-            </React.Fragment>
-        )}
-        </PopupState>
-    )
-}
- 
 export default ImageSettings;

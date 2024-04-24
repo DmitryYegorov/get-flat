@@ -120,8 +120,8 @@ const MyRealtySettings = ({ params }) => {
                                     path={`/${realty.id}/images/`}
                                     onLoad={(list) => {
                                         console.log({list});
-                                        setValue('images', list);
-                                        updateRealty(realty.id, {images: list})
+                                        setValue('images', [...images, ...list]);
+                                        updateRealty(realty.id, {images: [...images, ...list]})
                                             .then(res => {
                                                 toast.success('Изображения успешно загружены');
                                                 setRealty(null);
