@@ -14,15 +14,18 @@ import Counter from "../inputs/Counter";
 import ImagesUpload from "../inputs/ImagesUpload";
 import Input from "../inputs/Input";
 import { useRouter } from "next/navigation";
-import { Checkbox, FormControlLabel, TextareaAutosize, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, Select, TextareaAutosize, TextField, MenuItem, FormControl, InputLabel } from "@mui/material";
+import Head from "next/head";
 
 enum STEPS {
     CATEGORY = 0,
     LOCATION = 1,
     INFO = 2,
-    IMAGES = 3,
-    DESCRIPTION = 4,
-    PRICE = 5,
+    BATH = 3,
+    FOOD = 4,
+    IMAGES = 5,
+    DESCRIPTION = 6,
+    PRICE = 7,
 }
 
 const RentModal = () => {
@@ -56,6 +59,15 @@ const RentModal = () => {
             wcCount: 1,
             hasKitchen: false,
             hasParking: false,
+            childrenCount: 0,
+            bathType: '',
+            showerCount: 1,
+            hasPlayground: false,
+            bathroomIsCombined: false,
+            isAccessible: false,
+            hasBreakfast: false,
+            hasDinner: false,
+            hasLunch: false,
         }
     });
 
@@ -68,6 +80,15 @@ const RentModal = () => {
     const wcCount = watch('wcCount');
     const hasKitchen = watch('hasKitchen');
     const hasParking = watch('hasParking');
+    const childrenCount = watch('childrenCount');
+    const bathType = watch('bathType');
+    const showerCount = watch('showerCount');
+    const hasPlayground = watch('hasPlayground');
+    const bathroomIsCombined = watch('bathroomIsCombined');
+    const isAccessible = watch('isAccessible');
+    const hasBreakfast = watch('hasBreakfast');
+    const hasLunch = watch('hasLunch');
+    const hasDinner = watch('hasDinner');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -132,7 +153,7 @@ const RentModal = () => {
                     overflow-y-auto
                 "
             >
-                {categories.map((category: any) => (
+                {categories?.length && categories.map((category: any) => (
                     <div key={category.name} className="col-span-1">
                         <CategoryInput
                             onClick={(id) => {
@@ -141,7 +162,6 @@ const RentModal = () => {
                             categoryId={category.id}
                             selected={category.id === categoryId}
                             label={category.name}
-                            icon={category.icon }
                         />
                     </div>
                 ))}
@@ -181,44 +201,98 @@ const RentModal = () => {
                     title={"Расскажите подробнее про ваше место"}
                     subtitle="Что бы Вы хотели рассказать о нем?"                    
                 />
-                <Counter
-                    title="Гости"
-                    subtitle="Сколько гостей можете принять?"
-                    value={guestsCount}
-                    onChange={(value) => setCustomValue('guestCount', value)}
+                    <Counter
+                        title="Гости"
+                        subtitle="Сколько гостей можете принять?"
+                        value={guestsCount}
+                        onChange={(value) => setCustomValue('guestCount', value)}
+                    />
+                    <hr />
+                    <Counter
+                        title="Детские"
+                        subtitle="Сколько у вас метс для детей, если есть?"
+                        value={childrenCount}
+                        onChange={(value) => setCustomValue('childrenCount', value)}
+                    />
+                    <hr />
+                    <Counter
+                        title="Комнаты"
+                        subtitle="Сколько у вас отдельных комнат?"
+                        value={roomCount}
+                        onChange={(value) => setCustomValue('roomCount', value)}
+                    />
+                    <div>
+                    <div className="flex flex-col">
+                        <FormControlLabel control={<Checkbox defaultChecked={hasParking} onChange={(e) => setCustomValue('hasParking', e.target.checked)}/>} label="Есть паркока" />
+                        <FormControlLabel control={<Checkbox defaultChecked={hasPlayground} onChange={(e) => setCustomValue('hasPlayground', e.target.checked)}/>} label="Есть детская площадка" />
+                        <FormControlLabel control={<Checkbox defaultChecked={isAccessible} onChange={(e) => setCustomValue('isAccessible', e.target.checked)}/>} label="Удобства для людей с ограниченными возможностями" />
+                    </div>
+                    </div>
+            </div>
+        );
+    }
+
+    if (step === STEPS.BATH) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading
+                    title="Сведения о сан. узле"
                 />
-                <hr/>
-                <Counter
-                    title="Комнаты"
-                    subtitle="Сколько у вас отдельных комнат?"
-                    value={roomCount}
-                    onChange={(value) => setCustomValue('roomCount', value)}
-                />
-                <hr/>
-                <Counter
-                    title="Ванные комнаты"
-                    subtitle="Сколько у вас отдельных ванных комнат или душевых?"
-                    value={bathroomCount}
-                    onChange={(value) => setCustomValue('bathroomCount', value)}
-                />
-                <hr/>
                 <Counter
                     title="Туалеты"
                     subtitle="Сколько у вас туалетов?"
                     value={wcCount}
                     onChange={(value) => setCustomValue('wcCount', value)}
                 />
-                {/* <hr/>
-                <Counter
-                    title="Сан. узел раздельный"
-                    subtitle="Сколько у вас туалетов?"
-                    value={wcCount}
-                    onChange={(value) => setCustomValue('wcCount', value)}
-                /> */}
-                <hr/>
-                <FormControlLabel control={<Checkbox defaultChecked={hasKitchen} onChange={(e) => setCustomValue('hasKitchen', e.target.checked)}/>} label="Отдельная кухня" />
-                <hr/>
-                <FormControlLabel control={<Checkbox defaultChecked={hasParking} onChange={(e) => setCustomValue('hasParking', e.target.checked)}/>} label="Предоставление паркового места" />
+                <FormControl fullWidth>
+                    <InputLabel id="bathType">Ванная или душ?</InputLabel>
+                    <Select
+                        label="Тип ванной"
+                        id="bathType"
+                        onChange={(e: any) => {
+                            setCustomValue('bathType', e.target.value);
+                        } }
+                        size="medium"
+                    >
+                        <MenuItem value="bath">Ванная</MenuItem>
+                        <MenuItem value="shower">Душевая</MenuItem>
+                        <MenuItem value="both">Оба</MenuItem>
+                    </Select>
+                </FormControl>
+                {(bathType === 'bath' || bathType === 'both') && (
+                    <Counter
+                        title="Ванные комнаты"
+                        subtitle="Сколько у вас отдельных ванных комнат?"
+                        value={bathroomCount}
+                        onChange={(value) => setCustomValue('bathroomCount', value)}
+                    />
+                )}
+                {(bathType === 'shower' || bathType === 'both') && (
+                    <Counter
+                        title="Душевые"
+                        subtitle="Сколько у вас отдельных душевых комнат?"
+                        value={showerCount}
+                        onChange={(value) => setCustomValue('showerCount', value)}
+                    />
+                )}
+                <FormControlLabel control={<Checkbox defaultChecked={bathroomIsCombined} onChange={(e) => setCustomValue('bathroomIsCombined', e.target.checked)}/>} label="Совмещенный сан.узел" />
+            </div>
+        );
+    }
+
+    if (step === STEPS.FOOD) {
+        bodyContent = (
+            <div className="flex flex-col gap-8">
+                <Heading
+                    title="Услуги питания"
+                    subtitle="Что Вы предлгаете гостям касательно питания?"
+                />
+                <div className="flex flex-col">
+                    <FormControlLabel control={<Checkbox defaultChecked={hasKitchen} onChange={(e) => setCustomValue('hasKitchen', e.target.checked)}/>} label="Собственная кухня в номере" />
+                    <FormControlLabel control={<Checkbox defaultChecked={hasBreakfast} onChange={(e) => setCustomValue('hasBreakfast', e.target.checked)}/>} label="Включены затравки" />
+                    <FormControlLabel control={<Checkbox defaultChecked={hasLunch} onChange={(e) => setCustomValue('hasLunch', e.target.checked)}/>} label="Включены обеды" />
+                    <FormControlLabel control={<Checkbox defaultChecked={hasDinner} onChange={(e) => setCustomValue('hasDinner', e.target.checked)}/>} label="Включены полдники" />
+                </div>    
             </div>
         );
     }
@@ -306,12 +380,12 @@ const RentModal = () => {
         setIsLoading(true);
         data.price = +data.price;
         http.post('/realty', data)
-            .then(() => {
+            .then((res) => {
                 toast.success('Ура! Теперь о вашем месте узнают наши пользователи!');
-                router.refresh();
                 reset();
                 setStep(STEPS.CATEGORY);
                 rentModal.onClose();
+                router.replace(`/my-realty/${res.data.id}`);
             })
             .catch((err) => {
                 toast.error(err?.response?.data?.message || 'Что-то пошло не так, попробуйте позже')

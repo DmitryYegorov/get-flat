@@ -12,6 +12,7 @@ interface Props {
     required?: boolean;
     register: UseFormRegister<FieldValues>;
     errors: FieldErrors;
+    value?: string;
 }
 
 const Input: React.FC<Props> = ({
@@ -22,7 +23,8 @@ const Input: React.FC<Props> = ({
     formatPrice,
     required,
     register,
-    errors
+    errors,
+    value,
 }: Props) => {
     return (
         <div className="w-full relative">
@@ -44,6 +46,7 @@ const Input: React.FC<Props> = ({
                 {...register(id, {required})}
                 placeholder={""}
                 type={type}
+                value={value}
                 className={`
                     peer
                     w-full

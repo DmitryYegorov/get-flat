@@ -139,7 +139,7 @@ export default function UsersMenu() {
                                 label={`Избранное`}
                             />
                             <MenuItem
-                                onClick={() => {} }
+                                onClick={() => router.push('/my-bookings') }
                                 label={`Брони`}
                             />
                             <hr/>

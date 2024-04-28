@@ -109,7 +109,8 @@ const RealtyCard: React.FC<Props> = ({
                             object-cover
                             h-full
                             w-full
-                            group-hover:scale-110
+                            group
+                            hover:scale-110
                             transition
                         "
                         alt={data.title}

@@ -8,7 +8,7 @@ import Image from 'next/image';
 import HeartButton from "@get-flat/app/components/HeartButton";
 import { IoPerson } from "react-icons/io5";
 import { Alert, AlertTitle, Box, Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@mui/material";
-import { MdBathroom, MdBedroomParent, MdKitchen, MdLocalParking, MdWc } from "react-icons/md";
+import { MdAccessibility, MdBathroom, MdBathtub, MdBedroomParent, MdBreakfastDining, MdChildFriendly, MdDinnerDining, MdKitchen, MdLocalParking, MdLunchDining, MdShower, MdWc } from "react-icons/md";
 import { http } from "@get-flat/app/http";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
@@ -31,6 +31,12 @@ interface Props {
     realty: any;
     bookings?: any[]; 
 }
+function containsHTML(inputString: string): boolean {
+    // Регулярное выражение для поиска HTML-тегов
+    const htmlRegex = /<[^>]*>/;
+    return htmlRegex.test(inputString);
+}
+
 
 function getDatesInRange(startDate: Date, endDate: Date): Date[] {
     const dateArray = [];
@@ -177,33 +183,77 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                             ))}
 
                         </div>
-                        <Typography variant="body1">{bookingModal.isOpen ? 'true' : 'false'} {realty.description}</Typography>
+                        <div className="m-2 p-1">
+                            {containsHTML(realty?.description) ? (
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: realty.description
+                                    }} 
+                                />
+                            ) : (
+                                <Typography variant="body1">{realty.description}</Typography>
+                            )}
+                        </div>
+                        <Stack direction='column' width={'90%'} margin={2}>
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><IoPerson /> <Typography>Гости (взрослые)</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.guestCount} чел.</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdChildFriendly /> <Typography>Спальные места для детей</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.childrenCount === 0 ? 'Нет' : realty.childrenCount}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdBathroom /> <Typography>Ванные</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.bathroomCount}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdShower /> <Typography>Душевые</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.showerCount === 0 ? 'Нет' : realty.showerCount}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdWc /> <Typography>Туалеты</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.bathroomCount}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdBathtub /> <Typography>Сан. узел раздельный</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.bathroomIsCombined ? 'Да' : 'Нет'}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdKitchen /> <Typography>Кухня отдельно</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.hasKitchen ? 'Да' : 'Нет'}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdBreakfastDining /> <Typography>Бесплатные завтраки</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.hasBreakfast ? 'Да' : 'Нет'}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdLunchDining /> <Typography>Бесплатные обеды</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.hasLunch ? 'Да' : 'Нет'}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdDinnerDining /> <Typography>Бесплатные полдники</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.hasDinner ? 'Да' : 'Нет'}</Typography>
+                            </Stack>
+                            <hr />
+                            <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
+                                <Stack direction={'row'} alignItems={'center'} spacing={1}><MdAccessibility /> <Typography>Удобства для людей с ограниченными возможностями</Typography></Stack>
+                                <Typography variant="subtitle1">{realty.isAccessible ? 'Да' : 'Нет'}</Typography>
+                            </Stack>
+                        </Stack>
                     </Paper>
                 </Grid>
                 <Grid item xs={4}>
                     <Paper style={{padding: 10}}>
-                        <List>
-                            <ListItem>
-                                <ListItemIcon><IoPerson /></ListItemIcon>
-                                <Typography variant="subtitle1">Гости: {realty.guestCount} чел.</Typography>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemIcon><MdBathroom /></ListItemIcon>
-                                <Typography variant="subtitle1">Ванные комнаты: {realty.bathroomCount}</Typography>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemIcon><MdWc /></ListItemIcon>
-                                <Typography variant="subtitle1">Уборные: {realty.bathroomCount}</Typography>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemIcon><MdKitchen /></ListItemIcon>
-                                <Typography variant="subtitle1">Отдельная кухня: {realty.hasKitchen ? 'Да' : 'Нет'}</Typography>
-                            </ListItem>
-                            <ListItem>
-                                <ListItemIcon><MdLocalParking /></ListItemIcon>
-                                <Typography variant="subtitle1">Парковка: {realty.hasParking ? 'Да' : 'Нет'}</Typography>
-                            </ListItem>
-                            </List>
                             <Box>
                                 {currentUser ? (
                                     (
@@ -218,11 +268,18 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                                 </Alert>
                                             )
                                            }
-                                            <hr/>
                                             {/* <Typography>Бронь</Typography> */}
-                                            <Stack direction={'row'} spacing={1}>
+                                            <Stack direction='column' spacing={1}>
+                                                <Typography>Где находиться?</Typography>
+                                                <List>
+                                                    <ListItem>{realty?.location?.flag} {realty?.location?.label}, {realty?.location?.region}</ListItem>
+                                                    <ListItem>{realty?.city?.name}</ListItem>
+                                                    <ListItem>{realty?.address}</ListItem>
+                                                </List>
+                                                <hr />
                                                 <CustomProvider locale={ruRu}>
                                                 <DateRangePicker
+                                                    label={"Когда хотите отдохнуть здесь?"}
                                                     defaultCalendarValue={[startDate, endDate]}
                                                     onChange={(value) => {
                                                         const [startDate, endDate] = value!;
@@ -233,11 +290,14 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                                     appearance="subtle"
                                                     placement="top"
                                                     shouldDisableDate={(date) => {
-                                                        const formatted = booked.map(b => dayjs(b).format('YYYY-MM-DD'));
-                                                        // console.log({formatted});
-                                                        const res = formatted.includes(dayjs(date).format('YYYY-MM-DD'));
-                                                        return res;
+                                                        const slots = new Set(realty?.slots.map((slot) => dayjs(slot).format('YYYY-MM-DD')) || []);
+                                                        const isSlot = slots.has(dayjs(date).format('YYYY-MM-DD'));
+                                                        const formattedBookings = booked.map(b => dayjs(b).format('YYYY-MM-DD'));
+                                                        const isBooked = formattedBookings.includes(dayjs(date).format('YYYY-MM-DD'));
+
+                                                        return isBooked || !isSlot;
                                                     }}
+                                                    placeholder="Даты въезда и выезда"
                                                 />
                                                 </CustomProvider>
                                             </Stack>

@@ -33,7 +33,7 @@ const CategoryInput: React.FC<Props> = ({
                  ${selected ? 'border-indigo-500' : 'border-neutral-200'}
             `}
         >
-            <BsSnow size={30} />
+            {/* <BsSnow size={30} /> */}
             <div
                 className="font-semibold"
             >

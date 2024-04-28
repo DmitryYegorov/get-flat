@@ -8,12 +8,16 @@ import EmptyState from "../components/EmptyState";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { http } from "../http";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
 
 export default function MyRealty() {
     
   const [realties, setRealties] = useState([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
   const isEmpty = realties.length === 0;
+
+  const [section, setSection] = useState<'draft' | 'public' | 'bookings'>('draft');
 
   const router = useRouter();
 
@@ -25,13 +29,21 @@ export default function MyRealty() {
             })
     } else {
         http.get(`/realty/users/${currentUser.id}`)
-        .then((res) => {
-            const data = res.data;
+            .then((res) => {
+                const data = res.data;
 
-            setRealties(data.list);
-        });
+                setRealties(data.list);
+            });
+
+        if (section === 'bookings') {
+            http.get('/bookings/for-owner')
+                .then(res => {
+                    const b = res.data;
+                    setBookings(b);
+                });
+        }
     }
-  }, [currentUser]);
+  }, [currentUser, section]);
   
 
   if (isEmpty) {
@@ -52,18 +64,21 @@ export default function MyRealty() {
             <Grid item xs={4}>
                 <Paper style={{padding: 1}}>
                     <List>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => setSection('draft')}>
                             <Typography>Черновики</Typography>
                         </ListItemButton>
-                        <ListItemButton>
+                        <ListItemButton onClick={() => setSection('public')}>
                             <Typography>Опубликованные</Typography>
+                        </ListItemButton>
+                        <ListItemButton onClick={() => setSection('bookings')}>
+                            <Typography>Брони</Typography>
                         </ListItemButton>
                     </List>
                 </Paper>
             </Grid>
             <Grid item xs={8}>
                 <List>
-                    {realties.map((r: any) => (
+                    {section !== 'bookings' && realties.map((r: any) => (
                         <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                 <ListItemAvatar>
@@ -76,6 +91,21 @@ export default function MyRealty() {
                             </Stack>
                         </ListItem>
                     ))}
+                    {section === 'bookings' && bookings.map(b => (
+                        <ListItem key={b.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/bookings/${b.id}`)}> 
+                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                <ListItemAvatar>
+                                    <Avatar
+                                        src={b.realty.mainPhoto}
+                                    />
+                                </ListItemAvatar>
+                                <Typography>{b.realty.title}</Typography>
+                                <Chip label={`${dayjs(b.startDate).format('MM-DD-YYYY')} - ${dayjs(b.endDate).format('DD-MM-YYYY')}`} />
+                            </Stack>
+                        </ListItem>
+                    )
+                        
+                    )}
                 </List>
             </Grid>
         </Grid>

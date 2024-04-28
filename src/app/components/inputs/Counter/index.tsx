@@ -30,7 +30,7 @@ const Counter: React.FC<Props> = ({
 
     return (
         <div
-            className="flex flex-row items-center justify-between"
+            className="flex flex-row items-center justify-between m-1"
         > 
             <div className="flex flex-col">
                 <div className="font-medium">
@@ -67,7 +67,7 @@ const Counter: React.FC<Props> = ({
                         text-xl
                         text-neutral-600
                     "
-                >{value}</div>
+                >{value.toString()}</div>
                 <div
                     onClick={onAdd}
                     className="
