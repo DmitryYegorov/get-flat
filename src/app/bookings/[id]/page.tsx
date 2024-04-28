@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import Heading from "@get-flat/app/components/Heading";
 import Image from "next/image";
-import { Alert, AlertTitle, Grid, List, ListItem, ListItemIcon, ListItemText, Paper, Typography } from "@mui/material";
+import { Alert, AlertTitle, Grid, List, ListItem, ListItemIcon, ListItemText, Paper, TextField, Typography } from "@mui/material";
 import { AiOutlineProfile } from "react-icons/ai";
 import { getCurrentUser } from "@get-flat/app/http/auth";
 import { MdAccountBalance, MdDateRange, MdOutlinePerson4 } from "react-icons/md";
@@ -20,6 +20,9 @@ import { MessageList } from "react-chat-elements"
 import { Input as ChatInput } from 'react-chat-elements'
 import { indigo } from "@mui/material/colors";
 import Button from "@get-flat/app/components/Button";
+import { http } from "@get-flat/app/http";
+import toast from "react-hot-toast";
+
 
 const BookingDetails = ({ params }) => {
 
@@ -27,6 +30,7 @@ const BookingDetails = ({ params }) => {
     const [currentUser, setCurrentUser] = useState(null);
 
     const [chatOpen, setChatOpen] = useState(false);
+    const [secretCode, setSecretCode] = useState('');
 
     useEffect(() => {
         if (booking == null) {
@@ -86,9 +90,9 @@ const BookingDetails = ({ params }) => {
                     <Grid container>
                         <Grid item xs={8}>
                             <List>
-                                <ListItem>
+                                {/* <ListItem>
                                     <ListItemText className="p-1 bg-indigo-100 font-light w-5"><b>Код подтверждения: </b>{booking?.secretCode.padStart('0', 9)}</ListItemText>
-                                </ListItem>
+                                </ListItem> */}
                                 <ListItem>
                                     <ListItemIcon><AiOutlineProfile /></ListItemIcon>
                                     <ListItemText>{booking?.guestName || currentUser?.fullName}</ListItemText>
@@ -121,6 +125,42 @@ const BookingDetails = ({ params }) => {
                                     label="Чат с гостем"
                                     onClick={() => setChatOpen(true)}
                                 />
+                            </div>
+
+                            <div className="p-2 flex flex-row justify-between gap-2">
+                                {!booking?.confirmed ? (<>
+                                    <TextField
+                                            placeholder="Код"
+                                            helperText="Когда гость прибудет, спросите у него секретный код для подтверждения"
+                                            value={secretCode}
+                                            onChange={(e) => setSecretCode(e.target.value)}
+                                        />
+                                        <div className="w-40">
+                                            <Button
+                                                label="Подтвердить"
+                                                onClick={() => {
+                                                    http.post('/bookings/check-code', {bookingId: booking.id, secretCode })
+                                                        .then((res) => {
+                                                            toast.success("Подтверждение прошло успешно!");
+                                                            setBooking(null);
+                                                        })
+                                                        .catch(err => {
+                                                            const message = err?.response?.data?.message;
+                                                            console.log({err});
+                                                            if (message != null) {
+                                                                toast.error(message);
+                                                            } else {
+                                                                toast.error('Произошла ошибка');
+                                                            }
+                                                        })
+                                                }}
+                                            />
+                                        </div>
+                                </>) : (
+                                    <div className="w-full">
+                                    <Alert severity="success">Бронь завершена</Alert>
+                                    </div>
+                                )}
                             </div>
                         </Grid>
                     </Grid>

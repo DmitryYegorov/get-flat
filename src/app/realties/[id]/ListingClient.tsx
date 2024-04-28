@@ -269,10 +269,9 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                             )
                                            }
                                             <Stack direction='column' spacing={1}>
-                                                <Typography>Где находиться?</Typography>
-                                                <List>
-                                                    <ListItem>{realty?.location?.flag} {realty?.location?.label}, {realty?.location?.region}</ListItem>
-                                                    <ListItem>{realty?.city?.name}</ListItem>
+                                                <List className="font-semibold text-lg">
+                                                    <ListItem>{realty?.location?.flag} {realty?.location?.label} {realty?.location.cityName}</ListItem>
+                                                    <ListItem>{realty?.price} $ за ночь</ListItem>
                                                     <ListItem>{realty?.address}</ListItem>
                                                 </List>
                                                 <hr />
@@ -308,7 +307,7 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                                         realty,
                                                         startDate,
                                                         endDate,
-                                                        user: currentUser,
+                                                        user: currentUser
                                                     });
                                                     setCurrentUser(null);
                                                 }}

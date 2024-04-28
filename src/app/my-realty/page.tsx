@@ -78,7 +78,20 @@ export default function MyRealty() {
             </Grid>
             <Grid item xs={8}>
                 <List>
-                    {section !== 'bookings' && realties.map((r: any) => (
+                    {section === 'public' && realties.filter(r => r.status === 'ACTIVE').map((r: any) => (
+                        <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
+                            <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                <ListItemAvatar>
+                                    <Avatar
+                                        src={r.mainPhoto}
+                                    />
+                                </ListItemAvatar>
+                                <Typography>{r.title}</Typography>
+                                <Chip label={r.status} />
+                            </Stack>
+                        </ListItem>
+                    ))}
+                    {section === 'draft' && realties.filter(r => r.status === 'DRAFT').map((r: any) => (
                         <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                 <ListItemAvatar>

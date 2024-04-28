@@ -87,6 +87,8 @@ const BookingModal = ({onBook}: Props) => {
             documentId,
             documentType,
             comment,
+            guestCount,
+            childrenCount,
         })
             .then((res) => {
                 toast.success('Ваша бронь создана успешно, желаем хорошо отдохнуть!');

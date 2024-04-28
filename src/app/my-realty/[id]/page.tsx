@@ -239,7 +239,8 @@ const MyRealtySettings = ({ params }) => {
                 />
                 <CountrySelect
                     onChange={(value) => setValue('location', value)}
-                    value={location}
+                    country={realty.location}
+                    city={realty.city}
                 />
                 <Map
                     center={location?.latlng}
@@ -408,6 +409,14 @@ const MyRealtySettings = ({ params }) => {
                             <div style={{width: 150}}>
                                 <Button
                                     label={realty?.status === "DRAFT" ? 'Активировать' : 'В архив'}
+                                    onClick={() => {
+                                        updateRealty(realty.id, {
+                                            status: realty.status === 'DRAFT' ? 'ACTIVE' : 'DRAFT',
+                                        })
+                                        .then(res => {
+                                            setRealty(null);
+                                        })
+                                    }}
                                 />
                             </div>
                         </div>
