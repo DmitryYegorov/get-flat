@@ -10,6 +10,7 @@ import LoginModal from "./components/modals/LoginModal";
 import useAuth from "./hooks/useAuth";
 import RentModal from "./components/modals/RentModal";
 import UploadPhotos from "./components/modals/UploadPhotos";
+import FilterModal from "./components/modals/FilterModal";
 import BookingModal from "./components/modals/BookingModal";
 
 export const metadata: Metadata = {
@@ -32,11 +33,12 @@ export default function RootLayout({
       <body className={font.className}>
         <ClientOnly>
           <ToasterProvider />
-          <BookingModal />
+          <FilterModal />
           <RentModal />
           <RegisterModal />
           <LoginModal />
           <UploadPhotos />
+          <BookingModal />
           <Navbar />
         </ClientOnly>
         <div className="pb-20 pt-28">

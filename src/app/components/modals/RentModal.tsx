@@ -183,7 +183,7 @@ const RentModal = () => {
                 />
                 <CountrySelect
                     onChange={(value) => setCustomValue('location', value)}
-                    value={location}
+                    country={location}
                 />
                 <Map
                     center={location?.latlng}

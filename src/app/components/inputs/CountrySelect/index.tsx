@@ -1,36 +1,60 @@
 'use client';
 
+import useCities from '@get-flat/app/hooks/useCities';
 import useCountries from '@get-flat/app/hooks/useCountries';
+import { useEffect, useState } from 'react';
 import Select from 'react-select';
 
 interface Props {
-    value?: CountrySelectValue;
+    country?: CountrySelectValue;
     onChange: (value: CountrySelectValue) => void;
+    city?: any;
 }
 
 export type CountrySelectValue = {
     flag: string;
     label: string;
     latlng: number[];
-    value: string;
+    code: string;
     region: string;
+    cityName?: string;
 }
 
 const CountrySelect: React.FC<Props> = ({
-    value,
+    country,
+    city,
     onChange,
 }: Props) => {
 
     const { getAll } = useCountries();
+    const { getAllByCountry, getCities } = useCities();
+
+    const [selectedCountry, setSelectedCountry] = useState(country);
+    const [selectedCity, setSelectedCity] = useState(city);
+
+    useEffect(() => {
+        onChange({
+            flag: selectedCountry?.flag,
+            label: selectedCountry?.label,
+            code: selectedCountry?.code,
+            region: selectedCountry?.region,
+            cityName: selectedCity?.label,
+            latlng: selectedCity ? selectedCity?.latlng : selectedCountry?.latlng,
+        } as CountrySelectValue);
+    }, [selectedCity, selectedCountry]);
 
     return (
-        <div>
+        <div className='flex flex-col gap-8'>
             <Select
-                placeholder="Anywhere"
+                placeholder="Регион"
                 isClearable
                 options={getAll()}
-                value={value}
-                onChange={(value) => onChange(value as CountrySelectValue)}
+                value={selectedCountry}
+                onChange={(value) => {
+                    console.log(value);
+                    setSelectedCountry(value as CountrySelectValue);
+                    // onChange(value as CountrySelectValue)
+                }}
                 formatOptionLabel={(option) => (
                 <div
                     className='
@@ -38,11 +62,7 @@ const CountrySelect: React.FC<Props> = ({
                     '
                 >
                     <div>{option.flag}</div>
-                    <div>{option.label},
-                        <span className='text-neutral-500 ml-1'>
-                            {option.region}
-                        </span>
-                    </div>
+                    <div>{option.label}</div>
                 </div>
                 )}
                 classNames={{
@@ -61,6 +81,42 @@ const CountrySelect: React.FC<Props> = ({
                     }
                 })}
             />
+            {selectedCountry && (
+                <Select
+                    placeholder="Город"
+                    isClearable
+                    options={selectedCountry ? getAllByCountry(selectedCountry?.code) : getCities()}
+                    value={selectedCity}
+                    onChange={(city) => {
+                        console.log(city);
+                        setSelectedCity(city);
+                    }}
+                    formatOptionLabel={(option) => (
+                    <div
+                        className='
+                            flex flex-row items-center gap-3
+                        '
+                    >
+                        <div>{option.label}</div>
+                    </div>
+                    )}
+                    classNames={{
+                        control: () => 'p-3 border-2',
+                        input: () => 'text-lg',
+                        option: () => 'text-lg',
+                    }}
+                    theme={(theme) => ({
+                        ...theme,
+                        borderRadius: 6,
+                        colors: {
+                            ...theme.colors,
+                            primary: '#8285F0',
+                            primary25: '#ffffff',
+                            
+                        }
+                    })}
+                />
+            )}
         </div>
     );
 }

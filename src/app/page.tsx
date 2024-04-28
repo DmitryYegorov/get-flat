@@ -1,18 +1,21 @@
 'use client';
 
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { http } from './http';
 import ClientOnly from "./components/ClientOnly";
 import Container from "./components/Container";
 import EmptyState from "./components/EmptyState";
 import RealtyCard from "./components/realties/RealtyCard";
 import { getCurrentUser } from "./http/auth";
+import useFilter from "./hooks/useFilterModal";
 
 function Home() {
 
   const [realties, setRealties] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const isEmpty = realties.length === 0;
+
+  const filters = useFilter();
 
   useLayoutEffect(() => {
 
@@ -23,14 +26,16 @@ function Home() {
           setCurrentUser(res.data?.payload?.user);
         })
     }
+  }, []);
 
-    http.get('/realty')
+  useEffect(() => {
+    http.post('/realty/get', {...filters.params})
       .then((res) => {
         const data = res.data;
 
         setRealties(data.list);
       });
-  }, []);
+  }, [filters.params]);
 
   if (isEmpty) {
     return (

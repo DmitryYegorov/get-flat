@@ -1,9 +1,14 @@
 'use client';
 
+import useFilter from "@get-flat/app/hooks/useFilterModal";
 import { BiSearch } from "react-icons/bi";
 
 export default function Search() {
+
+    const filter = useFilter();
+
     return <div
+        onClick={() => filter.onOpen({})}
         className="
             border-[1px]
             w-full
@@ -26,15 +31,6 @@ export default function Search() {
         >
             <div
                 className="
-                    text-sm
-                    font-semibold
-                    px-6
-                "   
-            >
-                Anywhere
-            </div>
-            <div
-                className="
                     hidden
                     sm:block
                     text-sm
@@ -45,7 +41,7 @@ export default function Search() {
                     text-center
                 "
             >
-                Anyweek
+                Поиск по параметрам
             </div>
             <div
                 className="
@@ -59,7 +55,6 @@ export default function Search() {
                     gap-3
                 "
             >
-                <div className="hidden sm-block">Add Guests</div>
                 <div
                     className="
                         p-2

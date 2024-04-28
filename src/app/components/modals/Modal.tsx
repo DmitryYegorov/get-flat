@@ -15,6 +15,7 @@ interface Props {
     disabled?: boolean;
     secondaryAction?: () => void;
     secondaryLabel?: string;
+    width?: any;
 }
 
 const Modal: React.FC<Props> = ({
@@ -27,7 +28,8 @@ const Modal: React.FC<Props> = ({
     actionLabel,
     disabled,
     secondaryAction,
-    secondaryLabel
+    secondaryLabel,
+    width,
 }: Props) => {
     const [showModal, setShowModal] = useState(isOpen);
     
@@ -94,6 +96,8 @@ const Modal: React.FC<Props> = ({
                     lg:h-auto
                     md:h-auto
                 "
+
+                style={{width}}
             >
                 {/** Content */}
                 <div

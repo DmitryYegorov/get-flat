@@ -268,7 +268,6 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                                 </Alert>
                                             )
                                            }
-                                            {/* <Typography>Бронь</Typography> */}
                                             <Stack direction='column' spacing={1}>
                                                 <Typography>Где находиться?</Typography>
                                                 <List>

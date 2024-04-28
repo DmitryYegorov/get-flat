@@ -20,6 +20,7 @@ import { MessageList } from "react-chat-elements"
 import { Input as ChatInput } from 'react-chat-elements'
 import { Button } from "react-chat-elements";
 import { indigo } from "@mui/material/colors";
+import dict from "@get-flat/app/conts";
 
 const MyBookingDetails = ({ params }) => {
 
@@ -103,7 +104,7 @@ const MyBookingDetails = ({ params }) => {
                                 </ListItem>
                                 <ListItem>
                                     <ListItemIcon><BsPassport /></ListItemIcon>
-                                    <ListItemText>{booking?.documentType}, №{booking?.documentId}</ListItemText>
+                                    <ListItemText>{dict.get(booking?.documentType)}, №{booking?.documentId}</ListItemText>
                                 </ListItem>
                                 <ListItem>
                                     <ListItemIcon><BiCommentDetail /></ListItemIcon>

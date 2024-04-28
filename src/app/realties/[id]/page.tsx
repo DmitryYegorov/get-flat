@@ -7,7 +7,7 @@ import { http } from "@get-flat/app/http";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ListingClient from "./ListingClient";
-
+import 'rsuite/dist/rsuite.min.css';
 export default function Realty({ params }) {
 
     const router = useRouter();

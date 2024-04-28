@@ -8,15 +8,21 @@ interface Props {
     subtitle: string;
     value: number;
     onChange: (value: number) => void;
+    max?: number;
 }
 
 const Counter: React.FC<Props> = ({
     title,
     subtitle,
     value,
-    onChange
+    onChange,
+    max,
 }: Props) => {
-    const onAdd = useCallback(() => {
+    const onAdd = useCallback(() => { 
+        if (max != null && value === max) {
+            return;
+        }
+
         onChange(value + 1);
     }, [onChange, value]);
 

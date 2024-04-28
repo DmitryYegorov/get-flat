@@ -1,11 +1,11 @@
-import countries from 'world-countries';
+import { countries } from 'country-cities';
 
-const formattedCountries = countries.map(country => ({
-    value: country.cca2,
-    label: country.translations.rus.common,
+const formattedCountries = countries.all().map((country) => ({
+    code: country.isoCode,
+    label: country.name,
     flag: country.flag,
-    latlng: country.latlng,
-    region: country.region,
+    latlng: [country.latitude, country.longitude],
+    region: '',
 }));
 
 const useCountries = () => {
