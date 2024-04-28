@@ -39,17 +39,17 @@ const ChatLayout: React.FC<Props> = ({
 
     const text = watch('text');
 
-    // useEffect(() => {
-    //     setOpen(isOpen);
+    useEffect(() => {
+        setOpen(isOpen);
 
-    //     if (open) {
-    //         http.get(`/bookings/${bookingId}/chat`)
-    //             .then(res => {
-    //                 const m = res.data;
-    //                 setMessages(m);
-    //             });
-    //     }
-    // }, [bookingId, isOpen, open]);
+        if (open) {
+            http.get(`/bookings/${bookingId}/chat`)
+                .then(res => {
+                    const m = res.data;
+                    setMessages(m);
+                });
+        }
+    }, [bookingId, isOpen, open]);
 
     useEffect(() => {
         if (!messages?.length) {

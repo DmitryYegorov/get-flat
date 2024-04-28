@@ -403,9 +403,20 @@ const MyRealtySettings = ({ params }) => {
                 />
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
+                        <div className="flex flex-row gap-8 items-center mt-5">
+                            <div>Статус: <Chip label={realty?.status}/></div>
+                            <div style={{width: 150}}>
+                                <Button
+                                    label={realty?.status === "DRAFT" ? 'Активировать' : 'В архив'}
+                                />
+                            </div>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
                         <Stack>
                             <Typography>Брони</Typography>
                             <Paper>
+                                {!realty?.bookings?.length && (<Typography className="p-3">Пока что нет данных о бронированиях :(</Typography>)}
                                 <List>
                                     {realty?.bookings.map(b => (
                                         <ListItem key={b.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/bookings/${b.id}`)}> 
