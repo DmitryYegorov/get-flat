@@ -19,16 +19,14 @@ interface Props {
     onClose: () => void;
 }
 
+const socket = io('http://localhost:4444');
+
 const ChatLayout: React.FC<Props> = ({
     isOpen,
     bookingId,
     user,
     onClose,
 }) => {
-
-    console.log({user});
-
-    const socket = io('http://localhost:4444');
     
     const [open, setOpen] = useState(isOpen);
     const [messages, setMessages] = useState<any>([]);
@@ -41,17 +39,17 @@ const ChatLayout: React.FC<Props> = ({
 
     const text = watch('text');
 
-    useEffect(() => {
-        setOpen(isOpen);
+    // useEffect(() => {
+    //     setOpen(isOpen);
 
-        if (open) {
-            http.get(`/bookings/${bookingId}/chat`)
-                .then(res => {
-                    const m = res.data;
-                    setMessages(m);
-                });
-        }
-    }, [bookingId, isOpen, open]);
+    //     if (open) {
+    //         http.get(`/bookings/${bookingId}/chat`)
+    //             .then(res => {
+    //                 const m = res.data;
+    //                 setMessages(m);
+    //             });
+    //     }
+    // }, [bookingId, isOpen, open]);
 
     useEffect(() => {
         if (!messages?.length) {
@@ -67,9 +65,11 @@ const ChatLayout: React.FC<Props> = ({
             setMessages([...payload]);
         });
 
-        setTimeout(() => {
-            socket.emit('readMessages', {bookingId, userId: user.id});
-        }, 1500)
+        // if (messages.filter((m )=> m.from != user.id).some((m) => !m.isRead)) {
+        //     setTimeout(() => {
+        //         socket.emit('readMessages', {bookingId, userId: user.id});
+        //     }, 1500)
+        // }
     }, [bookingId, messages, socket, user.id]);
 
     const sendMessage = () => {
