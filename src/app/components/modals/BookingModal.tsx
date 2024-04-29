@@ -17,7 +17,7 @@ import useLoginModal from '@get-flat/app/hooks/useLoginModal';
 import useRegisterModal from '@get-flat/app/hooks/useRegisterModule';
 import useAuth from '@get-flat/app/hooks/useAuth';
 import useBooking from '@get-flat/app/hooks/useBookingModal';
-import { List, ListItem, ListItemIcon, Select, TextField, Typography, MenuItem } from '@mui/material';
+import { List, ListItem, ListItemIcon, Select, TextField, Typography, MenuItem, ListItemText } from '@mui/material';
 import { AiOutlineArrowLeft } from 'react-icons/ai';
 import { endOfDay, format } from 'date-fns';
 import dayjs from 'dayjs';
@@ -46,6 +46,8 @@ const BookingModal = ({onBook}: Props) => {
 
     const nextStep = () => {
         if (step === STEPS.DOCUMENT) {
+            bookingModal.onClose();
+            setOpen(false);
             return;
         }
 
@@ -60,8 +62,8 @@ const BookingModal = ({onBook}: Props) => {
         handleSubmit,
     } = useForm({
         defaultValues: {
-            documentType: null,
-            documentId: null,
+            guestEmail: bookingModal?.user?.email,
+            guestPhone: null,
             guestName: null,
             comment: null,
             guestCount: 1,
@@ -69,8 +71,8 @@ const BookingModal = ({onBook}: Props) => {
         }
     });
 
-    const documentType = watch('documentType');
-    const documentId = watch('documentId');
+    const guestPhone = watch('guestPhone');
+    const guestEmail = watch('guestEmail');
     const guestName = watch('guestName');
     const comment = watch('comment');
     const guestCount = watch('guestCount');
@@ -84,8 +86,8 @@ const BookingModal = ({onBook}: Props) => {
             startDate: bookingModal.startDate,
             endDate: bookingModal.endDate,
             guestName,
-            documentId,
-            documentType,
+            guestPhone,
+            guestEmail,
             comment,
             guestCount,
             childrenCount,
@@ -108,6 +110,7 @@ const BookingModal = ({onBook}: Props) => {
     let bodyContent;
 
     if (step === STEPS.DATES) {
+        const diff = dayjs(bookingModal.endDate).diff(dayjs(bookingModal.startDate), 'days') + 1;
         bodyContent = (
             <div
                 className='
@@ -120,17 +123,23 @@ const BookingModal = ({onBook}: Props) => {
                     title={'Ваша бронь'}
                     center
                 />
-                <List>
+                <List className='text-xl font-semibold w-full'>
                     <ListItem>
                         <ListItemIcon><AiOutlineArrowLeft size={18} /></ListItemIcon>
-                        <ListItem>Въезд {dayjs(bookingModal.startDate).format('DD/MM/YYYY')}</ListItem>
+                        <ListItemText>Въезд {dayjs(bookingModal.startDate).format('DD/MM/YYYY')}</ListItemText>
                     </ListItem>
                     <ListItem>
                         <ListItemIcon><AiOutlineArrowLeft size={18} /></ListItemIcon>
-                        <ListItem>Выезд {dayjs(bookingModal.endDate).format('DD/MM/YYYY')}</ListItem>
+                        <ListItemText>Выезд {dayjs(bookingModal.endDate).format('DD/MM/YYYY')}</ListItemText>
                     </ListItem>
-                    <ListItem>
+                    <ListItem className='text-xl font-semibold'>
                         {bookingModal.realty?.location?.flag} {bookingModal.realty?.location?.label}, {bookingModal.realty?.location?.region}
+                    </ListItem>
+                    <ListItem className='text-xl font-semibold'>
+                        {bookingModal.realty?.location?.cityName}
+                    </ListItem>
+                    <ListItem>
+                        <div className='text-xl font-semibold'>Итого: {bookingModal.realty?.price} $ * {diff} дней = {diff * (+bookingModal.realty?.price)} $</div>
                     </ListItem>
                     <ListItem>
                         <Typography variant='h6'>Всё верно?</Typography>
@@ -169,22 +178,26 @@ const BookingModal = ({onBook}: Props) => {
                         max={bookingModal.realty.childrenCount}             
                     />
                 )}
-                <Select {...register('documentType', { required: true})} error={errors['documentType']} placeholder='Документ' value={documentType} onChange={(e) => setValue('documentType', e.target.value)} required>
-                    <MenuItem value="passport">Паспорт</MenuItem>
-                    <MenuItem value="driver_licence">Водительское удостоверение</MenuItem>
-                </Select>
                 <TextField
-                    placeholder='Номер документа'
-                    value={documentId}
-                    onChange={(e) => setValue('documentId', e.target.value)}
-                    {...register('documentId', {required: true})}
-                    error={!!errors['documentId']}
+                    placeholder='Номер телефона'
+                    value={guestPhone}
+                    onChange={(e) => setValue('guestPhone', e.target.value)}
+                    {...register('guestPhone', {required: true})}
+                    error={!!errors['guestPhone']}
                 />
                 <TextField
-                    placeholder='Полное имя (Должно совпадать как в вашем докумегте!)'
+                    placeholder='E-mail'
+                    value={guestEmail}
+                    onChange={(e) => setValue('guestEmail', e.target.value)}
+                    {...register('guestEmail', {required: true})}
+                    error={!!errors['guestEmail']}
+                />
+                <TextField
+                    placeholder='Полное имя'
                     value={guestName}
                     onChange={(e) => setValue('guestName', e.target.value)}
                     error={!!errors?.['guestName']}
+                    helperText="Должно совпадать с Вашим удостоверением личности (паспорт и т.д)"
                     {...register('guestName', {required: true})}
                 />
                 <TextField

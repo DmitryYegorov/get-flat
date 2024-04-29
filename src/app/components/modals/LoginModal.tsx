@@ -49,11 +49,12 @@ const LoginModal = () => {
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('payload', JSON.stringify(payload));
 
-                toast.success(`Авторизация прошла успешно! Приятного пользования, ${data.payload.user.lastName} :)`);
+                toast.success(`Авторизация прошла успешно! Приятного пользования, ${data?.payload?.user?.lastName} :)`);
                 loginModal.onClose();
             })
             .catch(error => {
-                toast.error(error.response?.data?.message);
+                console.log(error);
+                toast.error(error?.response?.data?.message || 'Произошла ошибка, попробуйте позже');
             })
             .finally(() => {
                 setIsLoading(false);

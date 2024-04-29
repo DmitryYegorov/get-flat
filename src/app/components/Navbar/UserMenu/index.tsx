@@ -2,13 +2,14 @@
 
 import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "@get-flat/app/components/Avatar";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MenuItem from "@get-flat/app/components/Navbar/MenuItem";
 import useRegisterModule from "@get-flat/app/hooks/useRegisterModule";
 import useLoginModal from '@get-flat/app/hooks/useLoginModal';
 import useAuth from "@get-flat/app/hooks/useAuth";
 import useRentModal from "@get-flat/app/hooks/useRentModal";
 import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@get-flat/app/http/auth";
 
 export default function UsersMenu() {
     const registerModal = useRegisterModule();
@@ -16,7 +17,24 @@ export default function UsersMenu() {
     const authStore = useAuth();
     const rentModal = useRentModal();
 
+    const [user, setUser] = useState(null);
     const router = useRouter();
+
+    useEffect(() => {
+        if (user == null) {
+            getCurrentUser()
+                .then(res => {
+                    const u = res.data?.payload?.user;
+                    setUser(u);
+                })
+                .catch((e) => {
+                    localStorage.removeItem('payload');
+                    localStorage.removeItem('accessToken');
+                    router.push('/');
+                })
+        }
+    }, [user]);
+
 
     const [isOpen, setOpen] = useState(false);
 
@@ -107,7 +125,7 @@ export default function UsersMenu() {
                         cursor-pointer
                     "
                 >
-                    {!(localStorage.getItem('accessToken') && localStorage.getItem('payload')) ? (
+                    {!user ? (
                         <>
                         <MenuItem
                             onClick={() => loginModal.onOpen() }
@@ -124,7 +142,7 @@ export default function UsersMenu() {
                                 onClick={() => router.push('/profile') }
                                 label="Профиль"
                             />
-                            {(authStore.user.role === 'ADMIN' && (
+                            {(user?.role === 'ADMIN' && (
                                 <MenuItem
                                 onClick={() => {}}
                                 label="Панель Администратора"
