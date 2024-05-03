@@ -37,7 +37,7 @@ const EmptyState: React.FC<Props> = ({
                 {showReset && (
                     <Button 
                         outline
-                        label="Сбросить фильтры"
+                        label="На главную"
                         onClick={() => router.push('/')}
                     />
                 )}

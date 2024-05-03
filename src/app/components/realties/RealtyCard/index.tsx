@@ -7,6 +7,8 @@ import {format} from 'date-fns';
 import Image from 'next/image';
 import HeartButton from "../../HeartButton";
 import Button from "../../Button";
+import { Typography } from "@mui/material";
+import { MdStarBorder } from "react-icons/md";
 
 interface Props {
     data: any;
@@ -46,35 +48,14 @@ const RealtyCard: React.FC<Props> = ({
         
     }, []);
 
-    console.log(data.favorites.find((f: { userId: any; }) => f.userId === currentUser.id));
-
     const isLiked = () => {
         if (!data || !currentUser) {
             return false;
         }
 
-        const res = !!data.favorites.find((f: { userId: any; }) => f.userId === currentUser.id);
-        console.log({res});
+        const res = !!data?.favorites?.find((f: { userId: any; }) => f.userId === currentUser.id);
         return res;
     };
-
-    const price = useMemo(() => {
-        if (reservation) {
-            return reservation.totalPrice;
-        }
-        return data.price;
-    }, [data, reservation]);
-
-    let reservationDate = useMemo(() => {
-        if (!reservation) {
-            return null;
-        }
-
-        const start = new Date(reservation.startDate);
-        const end = new Date(reservation.endDate);
-
-        return `${format(start, 'PP')} - ${format(end, 'PP')}`;
-    }, [reservation]);
 
     return ( 
         <div
@@ -121,6 +102,9 @@ const RealtyCard: React.FC<Props> = ({
                             absolute
                             top-3
                             right-3
+                            flex
+                            flex-row
+                            gap-2
                         "
                     >
                         <HeartButton
@@ -133,7 +117,8 @@ const RealtyCard: React.FC<Props> = ({
                 <div
                     className="font-semibold text-lg"
                 >{location?.flag} {location?.region}, {location?.label}</div>
-                <div className="font-light text-neutral-500">{reservationDate || data.category.name}</div>
+                <div className="font-light text-neutral-500">{data.category.name}</div>
+                <div className="font-light text-neutral-500 flex items-center gap-2"><MdStarBorder  size={18}/> {data?.rating || 0}</div>
                 <div className="flex flex-row items-center gap-1">
                     <div className="font-semibold">$ {data.price}</div>
                     {!reservation && (

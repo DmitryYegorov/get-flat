@@ -11,6 +11,7 @@ const Navbar = () => {
         <div className="
             py-4
             border-b-[1px]
+            z-50
         ">
             <Container>
                 <div

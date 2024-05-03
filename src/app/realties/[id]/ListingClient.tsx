@@ -7,8 +7,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "reac
 import Image from 'next/image';
 import HeartButton from "@get-flat/app/components/HeartButton";
 import { IoPerson } from "react-icons/io5";
-import { Alert, AlertTitle, Box, Grid, List, ListItem, ListItemIcon, Paper, Stack, Typography } from "@mui/material";
-import { MdAccessibility, MdBathroom, MdBathtub, MdBedroomParent, MdBreakfastDining, MdChildFriendly, MdDinnerDining, MdKitchen, MdLocalParking, MdLunchDining, MdShower, MdWc } from "react-icons/md";
+import { Alert, AlertTitle, Box, Grid, List, ListItem, ListItemIcon, ListItemText, Paper, Stack, Typography } from "@mui/material";
+import { MdAccessibility, MdBathroom, MdBathtub, MdBedroomParent, MdBreakfastDining, MdChildFriendly, MdDinnerDining, MdKitchen, MdLocalParking, MdLunchDining, MdShower, MdStar, MdStarBorder, MdWc } from "react-icons/md";
 import { http } from "@get-flat/app/http";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
@@ -132,12 +132,23 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                 </div>
                 {currentUser && (
                     <div
-                        className="absolute top-5 right-5"
+                        className="absolute top-5 right-5 flex flex-row items-end"
                     >
-                        <HeartButton
-                            realtyId={realty.id}
-                            favorite={isLiked}
-                        />
+                        <div className="flex flex-row gap-6 items-center">
+                                <HeartButton
+                                    realtyId={realty.id}
+                                    favorite={isLiked}
+                                />
+                            <div className="flex flex-row gap-1 p-1 bg-white rounded-md">
+                                {/* <MdStarBorder
+                                    size={32}
+                                /> */}
+
+                                    <MdStar size={26} color={indigo[500]}/>    
+
+                                    <div className="text-xl font-semibold">{realty?.rating}</div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
@@ -317,6 +328,27 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                 ) : (
                                     <Typography variant="caption">Для того, чтобы забронировать нужна авторизация</Typography>
                                 )}
+                                <hr />
+                                <div className="font-semibold text-xl">Отзывы</div>
+                                <Stack>
+                                    {realty?.reviews?.map((r) => (
+                                        <div className="flex flex-col gap-1 rounded-md border-solid border-neutral-300 p-2 border-2">
+                                            <div className="font-semibold underline underline-offset-4 text-indigo-500">{r?.author?.firstName}</div>
+                                            <div className="w-full flex flex-row gap-2">
+                                                <div>{r.rating}</div>
+                                                <div>{r.text}</div>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="font-semibold">Понравилось:</div>
+                                                <div>{r.advantages}</div>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="font-semibold">Не онравилось:</div>
+                                                <div>{r.disadvantages}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </Stack>
                             </Box>
                     </Paper>
                 </Grid>

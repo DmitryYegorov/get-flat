@@ -149,7 +149,7 @@ export default function UsersMenu() {
                                 />
                             ))}
                             <MenuItem
-                                onClick={() => {} }
+                                onClick={() => router.push('/my-trips') }
                                 label={`Мои поездки`}
                             />
                             <MenuItem

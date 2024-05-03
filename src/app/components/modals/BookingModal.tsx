@@ -95,8 +95,8 @@ const BookingModal = ({onBook}: Props) => {
             .then((res) => {
                 toast.success('Ваша бронь создана успешно, желаем хорошо отдохнуть!');
                 console.log('booking', res.data);
-                onBook(res.data);
-                // bookingModal.onClose();
+                // onBook(res.data);
+                bookingModal.onClose();
                 router.push(`/my-bookings/${res.data.id}`);
             })
             .catch(error => {
