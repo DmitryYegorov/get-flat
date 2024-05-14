@@ -70,11 +70,11 @@ const FilterModal = () => {
         defaultValues: {
             location: null,
             city: null,
-            guestCount: 2,
-            childrenCount: 0,
-            hasParking: false,
-            hasPlayground: false,
-            isAccessible: false,
+            guestCount: null,
+            childrenCount: null,
+            hasParking: null,
+            hasPlayground: null,
+            isAccessible: null,
             categoryId: null,
         }
     });
@@ -197,14 +197,14 @@ const FilterModal = () => {
                         <Counter
                             title="Взрослые"
                             subtitle=""
-                            value={guestCount}
+                            value={guestCount || 1}
                             onChange={(value) => setValue('guestCount', value)}
                         />
                         <hr />
                         <Counter
                             title="Дети"
                             subtitle=""
-                            value={childrenCount}
+                            value={childrenCount || 0}
                             onChange={(value) => setValue('childrenCount', value)}
                         />
                         <div>
@@ -264,6 +264,7 @@ const FilterModal = () => {
             isOpen={filterModal.isOpen}
             title='Поиск'
             actionLabel='Продолжить'
+			hideButtons
             onClose={filterModal.onClose}
             onSubmit={handleSubmit(onSubmit)}
             body={bodyContent}

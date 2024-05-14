@@ -223,7 +223,7 @@ const RentModal = () => {
                     />
                     <div>
                     <div className="flex flex-col">
-                        <FormControlLabel control={<Checkbox defaultChecked={hasParking} onChange={(e) => setCustomValue('hasParking', e.target.checked)}/>} label="Есть паркока" />
+                        <FormControlLabel control={<Checkbox defaultChecked={hasParking} onChange={(e) => setCustomValue('hasParking', e.target.checked)}/>} label="Есть парковка" />
                         <FormControlLabel control={<Checkbox defaultChecked={hasPlayground} onChange={(e) => setCustomValue('hasPlayground', e.target.checked)}/>} label="Есть детская площадка" />
                         <FormControlLabel control={<Checkbox defaultChecked={isAccessible} onChange={(e) => setCustomValue('isAccessible', e.target.checked)}/>} label="Удобства для людей с ограниченными возможностями" />
                     </div>

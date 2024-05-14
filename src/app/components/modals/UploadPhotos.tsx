@@ -15,12 +15,10 @@ import toast from 'react-hot-toast';
 import Button from '../Button';
 import useLoginModal from '@get-flat/app/hooks/useLoginModal';
 import useRegisterModal from '@get-flat/app/hooks/useRegisterModule';
-import useAuth from '@get-flat/app/hooks/useAuth';
 import useUploadPhotosModal from '@get-flat/app/hooks/useUploadPhotosModal';
 
 const UploadPhotos = () => {
     
-    const authStore = useAuth();
     const uploadModal = useUploadPhotosModal();
     const [isLoading, setIsLoading] = useState(false);
 

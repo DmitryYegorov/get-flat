@@ -6,15 +6,14 @@ import { useCallback, useEffect, useState } from "react";
 import MenuItem from "@get-flat/app/components/Navbar/MenuItem";
 import useRegisterModule from "@get-flat/app/hooks/useRegisterModule";
 import useLoginModal from '@get-flat/app/hooks/useLoginModal';
-import useAuth from "@get-flat/app/hooks/useAuth";
 import useRentModal from "@get-flat/app/hooks/useRentModal";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@get-flat/app/http/auth";
+import Button from "../../Button";
 
 export default function UsersMenu() {
     const registerModal = useRegisterModule();
     const loginModal = useLoginModal();
-    const authStore = useAuth();
     const rentModal = useRentModal();
 
     const [user, setUser] = useState(null);
@@ -43,13 +42,13 @@ export default function UsersMenu() {
     }, []);
 
     const onRent = useCallback(() => {
-        if (!authStore.isAuthorized) {
+        if (!user) {
             return loginModal.onOpen();
         }
 
         return rentModal.onOpen();
 
-    }, [authStore.isAuthorized, loginModal, rentModal]);
+    }, [user, loginModal, rentModal]);
 
     return <div
         className="relative"
@@ -62,7 +61,7 @@ export default function UsersMenu() {
                 gap-3
             "
         >
-            <div
+            {/* <div
                 onClick={onRent}
                 className="
                     hidden
@@ -77,8 +76,18 @@ export default function UsersMenu() {
                     cursor-pointer
                 "
             >
-                HomeGuru твой дом
-            </div>
+                Создать объявление
+            </div> */}
+			{!!user ? (
+				<Button
+					label="Создать объявление"
+					onClick={onRent}
+					disabled={user?.status === 'PUBLICATIONS_BLOCKED'}
+				/>
+			) : (<div style={{
+				width: 300
+			}}></div>)}
+			<div></div>
             <div
                 onClick={toggleOpen}
                 className="
@@ -99,7 +108,7 @@ export default function UsersMenu() {
             >
                 <AiOutlineMenu />
                 <div className="hidden md:block">
-                    <Avatar />
+                    <Avatar imageSrc={user?.avatar}/>
                 </div>
             </div>
         </div>
@@ -109,7 +118,7 @@ export default function UsersMenu() {
                     absolute
                     rounded-xl
                     shadow-md
-                    w-[40vw]
+                    w-[50vw]
                     md:w-3/4
                     bg-white
                     overflow-hidden
@@ -144,7 +153,7 @@ export default function UsersMenu() {
                             />
                             {(user?.role === 'ADMIN' && (
                                 <MenuItem
-                                onClick={() => {}}
+                                onClick={() => router.push('/admin-panel')}
                                 label="Панель Администратора"
                                 />
                             ))}

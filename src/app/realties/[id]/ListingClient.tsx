@@ -195,17 +195,12 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
 
                         </div>
                         <div className="m-2 p-1">
-                            {containsHTML(realty?.description) ? (
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: realty.description
-                                    }} 
-                                />
-                            ) : (
-                                <Typography variant="body1">{realty.description}</Typography>
-                            )}
+                            <Typography variant="h5" style={{
+								borderBottom: '3px solid indigo',
+								display: 'inline-block',
+							}} className="first-letter:text-indigo-800 first-letter:font-semibold">Характеристики</Typography>
                         </div>
-                        <Stack direction='column' width={'90%'} margin={2}>
+                        <Stack direction='column' width={'95%'} margin={2} spacing={0.2}>
                             <Stack direction='row' justifyContent={'space-between'} alignItems={'center'}>
                                 <Stack direction={'row'} alignItems={'center'} spacing={1}><IoPerson /> <Typography>Гости (взрослые)</Typography></Stack>
                                 <Typography variant="subtitle1">{realty.guestCount} чел.</Typography>
@@ -261,6 +256,55 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                 <Typography variant="subtitle1">{realty.isAccessible ? 'Да' : 'Нет'}</Typography>
                             </Stack>
                         </Stack>
+
+						<Stack spacing={2}>
+								<div className="mt-[20px] p-1">
+									<Typography variant="h5" style={{
+										borderBottom: '3px solid indigo',
+										display: 'inline-block',
+									}} className="first-letter:text-indigo-800 first-letter:font-semibold">Описание</Typography>
+								</div>
+								<div className="m-2 p-1">
+									{containsHTML(realty?.description) ? (
+										<div
+											dangerouslySetInnerHTML={{
+												__html: realty.description
+											}} 
+										/>
+									) : (
+										<Typography variant="body1">{realty.description}</Typography>
+									)}
+								</div>
+						</Stack>
+
+						<Stack>
+							<div className="mt-[20px] p-1">
+								<Typography variant="h5" style={{
+									borderBottom: '3px solid indigo',
+									display: 'inline-block',
+								}} className="first-letter:text-indigo-800 first-letter:font-semibold">Отзывы</Typography>
+							</div>
+							<div>
+								{!realty?.reviews?.length && (<Typography>Пока никто не оставил отзыв...</Typography>)}
+								{realty?.reviews?.slice(0, 3).map((r) => (
+									<div className="flex flex-col gap-1 rounded-md border-solid border-neutral-300 p-2 border-2">
+										<div className="font-semibold underline underline-offset-4 text-indigo-500">{r?.author?.firstName}</div>
+										<div className="w-full flex flex-row gap-2">
+											<div>{r.rating}</div>
+											<div>{r.text}</div>
+										</div>
+										<div className="flex flex-col gap-2">
+											<div className="font-semibold">Понравилось:</div>
+											<div>{r.advantages}</div>
+										</div>
+										<div className="flex flex-col gap-2">
+											<div className="font-semibold">Не онравилось:</div>
+											<div>{r.disadvantages}</div>
+										</div>
+									</div>
+								))}
+							</div>
+						</Stack>
                     </Paper>
                 </Grid>
                 <Grid item xs={4}>
@@ -331,7 +375,7 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                 <hr />
                                 <div className="font-semibold text-xl">Отзывы</div>
                                 <Stack>
-                                    {realty?.reviews?.map((r) => (
+                                    {realty?.reviews?.slice(0, 3).map((r) => (
                                         <div className="flex flex-col gap-1 rounded-md border-solid border-neutral-300 p-2 border-2">
                                             <div className="font-semibold underline underline-offset-4 text-indigo-500">{r?.author?.firstName}</div>
                                             <div className="w-full flex flex-row gap-2">

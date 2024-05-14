@@ -16,6 +16,7 @@ interface Props {
     secondaryAction?: () => void;
     secondaryLabel?: string;
     width?: any;
+	hideButtons?: boolean;
 }
 
 const Modal: React.FC<Props> = ({
@@ -30,6 +31,7 @@ const Modal: React.FC<Props> = ({
     secondaryAction,
     secondaryLabel,
     width,
+	hideButtons
 }: Props) => {
     const [showModal, setShowModal] = useState(isOpen);
     
@@ -187,19 +189,21 @@ const Modal: React.FC<Props> = ({
                                     w-full
                                 "
                             >
-                                {secondaryAction && secondaryLabel && (
-                                    <Button
-                                        disabled={disabled}
-                                        label={secondaryLabel}
-                                        onClick={handleSecondaryAction}
-                                        outline
-                                    />
-                                )}
-                                <Button
-                                    disabled={disabled}
-                                    label={actionLabel}
-                                    onClick={handleSubmit}
-                                />
+								{!hideButtons && secondaryAction && secondaryLabel && (
+									<Button
+										disabled={disabled}
+										label={secondaryLabel}
+										onClick={handleSecondaryAction}
+										outline
+									/>
+								)}
+								{!hideButtons && (
+									<Button
+										disabled={disabled}
+										label={actionLabel}
+										onClick={handleSubmit}
+									/>
+								)}
                             </div>
 
                             {footer}

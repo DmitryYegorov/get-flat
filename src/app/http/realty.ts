@@ -7,3 +7,5 @@ export const getFavoriteRealties = () => http.get('/realty/favorites');
 export const getRealtyDetails = (id: string) => http.get(`/realty/${id}`);
 
 export const updateRealty = (id: string, data: any) => http.patch(`/realty/${id}`, data);
+
+export const sentToModeration = (id: string) => http.patch(`/realty/${id}/moderation`)

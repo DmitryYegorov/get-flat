@@ -11,6 +11,7 @@ interface Props {
     small?: boolean;
     icon?: IconType;
     type?: 'file';
+	hidden?: boolean;
 }
 
 const VisuallyHiddenInput = styled('input')({
@@ -32,11 +33,13 @@ const Button: React.FC<Props> = ({
     outline,
     small,
     icon: Icon,
-    type
+    type,
+	hidden
 }) => {
     return ( <button
         onClick={onClick}
         disabled={disabled}
+		style={hidden ? {overflow: 'hidden'} : {}}
         className={`
             relative
             disabled:opacity-70

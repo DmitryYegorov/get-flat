@@ -15,12 +15,11 @@ import toast from 'react-hot-toast';
 import Button from '../Button';
 import useLoginModal from '@get-flat/app/hooks/useLoginModal';
 import useRegisterModal from '@get-flat/app/hooks/useRegisterModule';
-import useAuth from '@get-flat/app/hooks/useAuth';
+import axios, {AxiosError} from 'axios';
 
 const LoginModal = () => {
     const registerModal = useRegisterModal();
     const loginModal = useLoginModal();
-    const authStore = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -39,12 +38,12 @@ const LoginModal = () => {
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
 
-        http.post('/users/auth/login', data)
+        axios.post('http://localhost:4444/users/auth/login', data)
             .then((res) => {
-                const data = res.data;
-                const {accessToken, payload} = data;
-
-                authStore.onAuthorized(payload);
+				console.log({res})
+                const data = res?.data;
+				const accessToken = data?.accessToken;
+				const payload = data?.payload;
 
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('payload', JSON.stringify(payload));
@@ -52,9 +51,14 @@ const LoginModal = () => {
                 toast.success(`Авторизация прошла успешно! Приятного пользования, ${data?.payload?.user?.lastName} :)`);
                 loginModal.onClose();
             })
-            .catch(error => {
-                console.log(error);
-                toast.error(error?.response?.data?.message || 'Произошла ошибка, попробуйте позже');
+            .catch((error) => {
+				if (axios.isAxiosError(error)) {
+					const err = error as AxiosError;
+					toast.error(err.response?.data?.message || 'Произошла ошибка, попробуйте позже');
+					return;
+				}
+				console.log('not', error);
+                toast.error(null || 'Произошла ошибка, попробуйте позже');
             })
             .finally(() => {
                 setIsLoading(false);
@@ -128,8 +132,8 @@ const LoginModal = () => {
         <Modal
             disabled={isLoading}
             isOpen={loginModal.isOpen}
-            title='Login'
-            actionLabel='Continue'
+            title='Авторизация'
+            actionLabel='Войти'
             onClose={loginModal.onClose}
             onSubmit={handleSubmit(onSubmit)}
             body={bodyContent}

@@ -1,5 +1,7 @@
+'use client';
+
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, List, ListItemButton, ListItemText, Paper } from "@mui/material";
-import React from "react";
+import React, {useEffect} from "react";
 
 interface Props {
     open: boolean;
@@ -14,7 +16,11 @@ interface Props {
 export default function DraggableDialog(props: Props) {
     const [open, setOpen] = React.useState(props.open);
 
-    console.log({open});
+    useEffect(() => {
+		if (!props.open) {
+			setOpen(false);
+		}
+	}, []);
   
     const handleClickOpen = () => {
       setOpen(true);
@@ -27,7 +33,7 @@ export default function DraggableDialog(props: Props) {
     return (
       <React.Fragment>
         <Dialog
-          open={open}
+          open={props.open}
           onClose={handleClose}
           PaperComponent={Paper}
           aria-labelledby="draggable-dialog-title"

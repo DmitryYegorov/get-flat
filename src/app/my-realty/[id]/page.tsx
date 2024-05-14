@@ -5,7 +5,7 @@ import Container from "@get-flat/app/components/Container";
 import Heading from "@get-flat/app/components/Heading";
 import { getCurrentUser } from "@get-flat/app/http/auth";
 import { getRealtyDetails, updateRealty } from "@get-flat/app/http/realty";
-import { Checkbox, Chip, FormControl, FormControlLabel, Grid, InputLabel, ListItem, ListItemAvatar, ListItemText, MenuItem, Paper, Select, Stack, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Alert, AlertTitle, Checkbox, Chip, FormControl, FormControlLabel, Grid, InputLabel, ListItem, ListItemAvatar, ListItemText, MenuItem, Paper, Select, Stack, TextField, Typography } from "@mui/material";
 import { Key, useLayoutEffect, useMemo, useState } from "react";
 import Image from 'next/image';
 import ImageSettings from "../components/ImageSettings";
@@ -31,6 +31,7 @@ import dynamic from "next/dynamic";
 import Input from "@get-flat/app/components/inputs/Input";
 import router from "next/router";
 import { useRouter } from "next/navigation";
+import {RealtyStatusMap} from "@get-flat/app/maps";
 
 const isBooked = (date: Date, booked: [Date, Date][]) => {
     for (const [start, end] of booked) {
@@ -185,7 +186,8 @@ const MyRealtySettings = ({ params }) => {
             dates: selectedDates.map(sd => new Date(sd)),
         })
             .then((res) => {
-                setRealty(null);
+                // setRealty(null);
+				window.location.reload();
             });
     }
 
@@ -343,7 +345,7 @@ const MyRealtySettings = ({ params }) => {
             <div className="flex flex-col gap-8">
                 <Heading
                     title="Услуги питания"
-                    subtitle="Что Вы предлгаете гостям касательно питания?"
+                    subtitle="Что Вы предлогаете гостям касательно питания?"
                 />
                 <div className="flex flex-col">
                     <FormControlLabel control={<Checkbox defaultChecked={hasKitchen} onChange={(e) => setValue('hasKitchen', e.target.checked)}/>} label="Собственная кухня в номере" />
@@ -402,202 +404,232 @@ const MyRealtySettings = ({ params }) => {
                     title={`Управление недвижимостью / ${realty.title}`}
                     subtitle="На этой странице вы можете внести изменения либо добавить/удалить слоты в которые гости смогут забронировать Ваше место для отдыха"
                 />
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <div className="flex flex-row gap-8 items-center mt-5">
-                            <div>Статус: <Chip label={realty?.status}/></div>
-                            <div style={{width: 150}}>
-                                <Button
-                                    label={realty?.status === "DRAFT" ? 'Активировать' : 'В архив'}
-                                    onClick={() => {
-                                        updateRealty(realty.id, {
-                                            status: realty.status === 'DRAFT' ? 'ACTIVE' : 'DRAFT',
-                                        })
-                                        .then(res => {
-                                            setRealty(null);
-                                        })
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Stack>
-                            <Typography>Брони</Typography>
-                            <Paper>
-                                {!realty?.bookings?.length && (<Typography className="p-3">Пока что нет данных о бронированиях :(</Typography>)}
-                                <List>
-                                    {realty?.bookings.map(b => (
-                                        <ListItem key={b.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/bookings/${b.id}`)}> 
-                                            <ListItemText>{`${dayjs(b.startDate).format('MM-DD-YYYY')} - ${dayjs(b.endDate).format('DD-MM-YYYY')}`}</ListItemText>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Paper>
-                        </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Stack spacing={2} marginTop={4}>
-                        <Typography variant="h6">Изображения</Typography>
-                        <Stack spacing={1}>
-                            <div className="w-52">
-                                <InputFileUpload
-                                    path={`/${realty.id}/images/`}
-                                    onLoad={(list) => {
-                                        console.log({list});
-                                        setValue('images', [...images, ...list]);
-                                        updateRealty(realty.id, {images: [...images, ...list]})
-                                            .then(res => {
-                                                toast.success('Изображения успешно загружены');
-                                                setRealty(null);
-                                            });
-                                    }}
-                                />
-                            </div>
-                            <Stack spacing={1} direction={'row'}>
-                                    <div>
-                                        <ImageSettings
-                                            isMain
-                                            src={mainPhoto}
-                                            width={200}
-                                            height={200}
-                                            onDelete={(src) => {
-                                                const mainPhoto = images[0];
-                                                updateRealty(realty.id, {mainPhoto, images: images.slice(1)});
-                                                setValue('mainPhoto', src);
-                                                setValue('images', images.slice(0));
-                                                setRealty(null);
-                                            }}
-                                        />
-                                    </div>
-                                    <div style={{
-                                        marginLeft: 15,
-                                        maxHeight: 300,
-                                        width: '100%',
-                                        position: 'relative',
-                                        display: 'flex',
-                                        gap: 0,
-                                        overflowX: 'auto',
-                                        scrollSnapType: 'x mandatory',
-                                    }}>
-                                        {[...images].map((img: any) => (
-                                            <div key={img} style={{
-                                                scrollSnapAlign: 'start',
-                                                flex: '0 0 160px',
-                                            }}>
-                                                <ImageSettings
-                                                    src={img}
-                                                    width={150}
-                                                    height={150}
-                                                    onDelete={handleDelete}
-                                                    onMakeMain={(src) => {
-                                                        const mainPhoto = images[0];
-                                                        updateRealty(realty.id, {mainPhoto, images: [...images.filter(img => img !== src), realty.mainPhoto]});
-                                                        setValue('mainPhoto', src);
-                                                        setValue('images', images.slice(0));
-                                                        setRealty(null);
-                                                    }}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                            </Stack>
-                        </Stack>
-                        <Stack>
-                            <Typography variant="h6">Информация</Typography>
-                            <Paper style={{padding: 1}}>
-                                <Stack spacing={2} margin={2}>
-                                    <FormControl>
-                                        <InputLabel id="bathType">Секция Данных</InputLabel>
-                                        <Select
-                                            id="bathType"
-                                            onChange={(e: any) => {
-                                                setSettings(e.target.value);
-                                            } }
-                                            size="medium"
-                                            value={settings}
-                                        >
-                                            <MenuItem value={STEPS.CATEGORY}>Категория</MenuItem>
-                                            <MenuItem value={STEPS.LOCATION}>Локация</MenuItem>
-                                            <MenuItem value={STEPS.INFO}>Информация</MenuItem>
-                                            <MenuItem value={STEPS.BATH}>Санитарные комнаты</MenuItem>
-                                            <MenuItem value={STEPS.FOOD}>Питание</MenuItem>
-=                                           <MenuItem value={STEPS.DESCRIPTION}>Описание</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                    <hr/>
-                                    {settingsBody}
-                                    <Button
-                                        label="Сохранить"
-                                        onClick={handleSubmit(handleEditData)}
-                                    />
-                                </Stack>
-                            </Paper>
-                        </Stack>
-                    </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Stack marginTop={5} spacing={2}>
-                            <Typography variant="h6">Доступные слоты бронирования</Typography>
-                            <Paper>
-                                <Stack spacing={2} className="p-6">
-                                    <Button
-                                        label="Добавить на выбранные даты"
-                                        disabled={selectedDates.length === 0}
-                                        onClick={() => {
-                                            addSelectedDatesToSlots();
-                                            setSelectedDates([]);
-                                        }}
-                                    />
-                                    <Button
-                                        label="Удалить выбранные слоты"
-                                        outline
-                                    />
-                                </Stack>
-                                <hr />
-                                <CustomProvider locale={ruRU}>
-                                    <Calendar
-                                        compact
-                                        cellClassName={(date: Date) => {
 
-                                            for (const item of realty.slots) {
-                                                if (getCleanDate(item) === getCleanDate(date)) {
-                                                    return 'bg-neutral-200 border-solid border-2 border-rose-600';
-                                                }
-                                            }
+<Stack>
+							<div className="flex flex-row gap-8 items-center mt-5">
+								<div>Статус: <Chip label={RealtyStatusMap[realty?.status]}/></div>
+								{['ACTIVE', 'DRAFT'].includes(realty?.status) && (
+									<>
+										<div style={{width: 150}}>
+											<Button
+												label={realty?.status === "DRAFT" ? 'Опубликовать' : 'В архив'}
+												onClick={() => {
+													updateRealty(realty.id, {
+														status: realty.status === 'DRAFT' ? 'MODERATION' : 'DRAFT',
+													})
+														.then(res => {
+															setRealty(res.data);
+														})
+												}}
+											/>
+										</div>
+									</>
+								)}
+							</div>
 
-                                            for (const [start,end] of realty.booked) {
+							<div className="mt-3 mb-2">
+								{realty?.status === 'REJECTED' ? (
+									<Alert severity="error">
+										<AlertTitle>Отклонено</AlertTitle>
+										<b>Сообщение модератора:</b> {realty?.rejectionNotes || 'Без объяснения причин. Обратитесь в поддержку'}
+									</Alert>
+								) : null}
+								{/* {realty?.status === ''} */}
+							</div>
+						</Stack>
+						
+						{realty?.status === 'ACTIVE' ? (
+							<Stack>
+								<Typography>Брони</Typography>
+								<Paper>
+									{!realty?.bookings?.length && (<Typography className="p-3">Пока что нет данных о бронированиях :(</Typography>)}
+									<List>
+										{realty?.bookings?.map(b => (
+											<ListItem key={b.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/bookings/${b.id}`)}> 
+												<ListItemText>{`${dayjs(b.startDate).format('MM-DD-YYYY')} - ${dayjs(b.endDate).format('DD-MM-YYYY')}`}</ListItemText>
+											</ListItem>
+										))}
+									</List>
+								</Paper>
+							</Stack>
+						) : null}
 
-                                                if (new Date(start) <= date && new Date(end) >= date) {
-                                                    return 'bg-indigo-100';
-                                                }
-                                            }
+				<Stack spacing={0}>
+					<Accordion defaultExpanded>
+						<AccordionSummary>Изображения</AccordionSummary>
+						<hr/>
+						<AccordionDetails>
+							<Stack spacing={1}>
+								<div className="w-52">
+									<InputFileUpload
+										path={`/${realty.id}/images/`}
+										onLoad={(list) => {
+											console.log({list});
+											setValue('images', [...images, ...list]);
+											updateRealty(realty.id, {images: [...images, ...list]})
+												.then(res => {
+													toast.success('Изображения успешно загружены');
+													setRealty(null);
+												});
+										}}
+									/>
+								</div>
+								<Stack spacing={1} direction={'row'}>
+										<div>
+											<ImageSettings
+												isMain
+												src={mainPhoto}
+												width={200}
+												height={200}
+												onDelete={(src) => {
+													const mainPhoto = images[0];
+													updateRealty(realty.id, {mainPhoto, images: images.slice(1)});
+													setValue('mainPhoto', src);
+													setValue('images', images.slice(0));
+													setRealty(null);
+												}}
+											/>
+										</div>
+										<div style={{
+											marginLeft: 15,
+											maxHeight: 300,
+											width: '100%',
+											position: 'relative',
+											display: 'flex',
+											gap: 0,
+											overflowX: 'auto',
+											scrollSnapType: 'x mandatory',
+										}}>
+											{[...images].map((img: any) => (
+												<div key={img} style={{
+													scrollSnapAlign: 'start',
+													flex: '0 0 160px',
+												}}>
+													<ImageSettings
+														src={img}
+														width={150}
+														height={150}
+														onDelete={handleDelete}
+														onMakeMain={(src) => {
+															const mainPhoto = images[0];
+															updateRealty(realty.id, {mainPhoto, images: [...images.filter(img => img !== src), realty.mainPhoto]});
+															setValue('mainPhoto', src);
+															setValue('images', images.slice(0));
+															setRealty(null);
+														}}
+													/>
+												</div>
+											))}
+										</div>
+								</Stack>
+							</Stack>
+						</AccordionDetails>
+					</Accordion>
 
-                                            if (selectedDates.includes(dayjs(date).format('YYYY-MM-DD'))) {
-                                                return 'border-solid border-2 border-indigo-600 bg-indigo-100 rounded-md outline-none'
-                                            }
+					<Accordion>
+						<AccordionSummary>Информация</AccordionSummary>
+						<AccordionDetails>
+							<Stack>
+								<Paper style={{padding: 1}}>
+									<Stack spacing={2} margin={2}>
+										<FormControl>
+											<InputLabel id="bathType">Секция Данных</InputLabel>
+											<Select
+												id="bathType"
+												onChange={(e: any) => {
+													setSettings(e.target.value);
+												} }
+												size="medium"
+												value={settings}
+											>
+												<MenuItem value={STEPS.CATEGORY}>Категория</MenuItem>
+												<MenuItem value={STEPS.LOCATION}>Локация</MenuItem>
+												<MenuItem value={STEPS.INFO}>Информация</MenuItem>
+												<MenuItem value={STEPS.BATH}>Санитарные комнаты</MenuItem>
+												<MenuItem value={STEPS.FOOD}>Питание</MenuItem>
+												<MenuItem value={STEPS.DESCRIPTION}>Описание</MenuItem>
+											</Select>
+										</FormControl>
+										<hr/>
+										{settingsBody}
+										<Button
+											label="Сохранить"
+											onClick={handleSubmit(handleEditData)}
+										/>
+									</Stack>
+								</Paper>
+							</Stack>
+						</AccordionDetails>
+					</Accordion>
 
-                                            return '';
-                                        }}
-                                        onSelect={(date) => {
-                                            console.log(date, isBooked(date, realty.booked));
+					<Accordion>
+						<AccordionSummary>Слоты для бронирования</AccordionSummary>
+						<AccordionDetails>
+							<Stack marginTop={5} spacing={2}>
+								<Typography variant="h6">Доступные слоты бронирования</Typography>
+								<Paper>
+									<Stack spacing={2} className="p-6">
+										<Button
+											label="Добавить на выбранные даты"
+											disabled={selectedDates.length === 0}
+											onClick={() => {
+												addSelectedDatesToSlots();
+												setSelectedDates([]);
+											}}
+										/>
+										<Button
+											label="Удалить выбранные слоты"
+											outline
+										/>
+									</Stack>
+									<hr />
+									<CustomProvider locale={ruRU}>
+										<Calendar
+											compact
+											cellClassName={(date: Date) => {
 
-                                            if (isBooked(date, realty.booked)) {
-                                                return;
-                                            }
+												if (realty?.slots) {
+													for (const item of realty?.slots) {
+														if (getCleanDate(item) === getCleanDate(date)) {
+															return 'bg-neutral-200 border-solid border-2 border-rose-600';
+														}
+													}
+												}
 
-                                            if (!selectedDates.includes(dayjs(date).format('YYYY-MM-DD'))) {
-                                                setSelectedDates([...selectedDates, dayjs(date).format('YYYY-MM-DD')]);
-                                            } else {
-                                                setSelectedDates([...selectedDates.filter(s => s !== dayjs(date).format('YYYY-MM-DD'))]);
-                                            }
-                                        }}
-                                    />
-                                </CustomProvider>
-                            </Paper>
-                        </Stack>
-                    </Grid>
-                </Grid>
+												for (const [start,end] of realty.booked) {
+
+													if (new Date(start) <= date && new Date(end) >= date) {
+														return 'bg-indigo-100';
+													}
+												}
+
+												if (selectedDates.includes(dayjs(date).format('YYYY-MM-DD'))) {
+													return 'border-solid border-2 border-indigo-600 bg-indigo-100 rounded-md outline-none'
+												}
+
+												return '';
+											}}
+											onSelect={(date) => {
+												console.log(date, isBooked(date, realty.booked));
+
+												if (isBooked(date, realty.booked)) {
+													return;
+												}
+
+												if (!selectedDates.includes(dayjs(date).format('YYYY-MM-DD'))) {
+													setSelectedDates([...selectedDates, dayjs(date).format('YYYY-MM-DD')]);
+												} else {
+													setSelectedDates([...selectedDates.filter(s => s !== dayjs(date).format('YYYY-MM-DD'))]);
+												}
+											}}
+										/>
+									</CustomProvider>
+								</Paper>
+							</Stack>
+						</AccordionDetails>
+					</Accordion>
+
+				</Stack>
             </Container>
         </ClientOnly>
     );

@@ -9,6 +9,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { http } from "../http";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import {RealtyStatusMap} from "../maps";
 
 export default function MyRealty() {
     
@@ -17,7 +18,7 @@ export default function MyRealty() {
   const [bookings, setBookings] = useState<any[]>([]);
   const isEmpty = realties.length === 0;
 
-  const [section, setSection] = useState<'draft' | 'public' | 'bookings'>('draft');
+  const [section, setSection] = useState<'draft' | 'public' | 'bookings' | 'all'>('all');
 
   const router = useRouter();
 
@@ -64,11 +65,14 @@ export default function MyRealty() {
             <Grid item xs={4}>
                 <Paper style={{padding: 1}}>
                     <List>
+                        <ListItemButton onClick={() => setSection('all')}>
+                            <Typography>Все объявления</Typography>
+                        </ListItemButton>
                         <ListItemButton onClick={() => setSection('draft')}>
-                            <Typography>Черновики</Typography>
+                            <Typography>+ Черновики</Typography>
                         </ListItemButton>
                         <ListItemButton onClick={() => setSection('public')}>
-                            <Typography>Опубликованные</Typography>
+                            <Typography>+ Опубликованные</Typography>
                         </ListItemButton>
                         <ListItemButton onClick={() => setSection('bookings')}>
                             <Typography>Брони</Typography>
@@ -78,7 +82,22 @@ export default function MyRealty() {
             </Grid>
             <Grid item xs={8}>
                 <List>
-                    {section === 'public' && realties.filter(r => r.status === 'ACTIVE').map((r: any) => (
+					{
+						section === 'all' && realties?.map((r: any) => (
+							<ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
+								<Stack spacing={1} direction={'row'} alignItems={'center'}>
+									<ListItemAvatar>
+										<Avatar
+											src={r.mainPhoto}
+										/>
+									</ListItemAvatar>
+									<Typography>{r.title}</Typography>
+									<Chip label={RealtyStatusMap[r.status]} />
+								</Stack>
+							</ListItem>
+						))
+					}
+                    {section === 'public' && realties?.filter(r => r.status === 'ACTIVE')?.map((r: any) => (
                         <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                 <ListItemAvatar>
@@ -87,11 +106,11 @@ export default function MyRealty() {
                                     />
                                 </ListItemAvatar>
                                 <Typography>{r.title}</Typography>
-                                <Chip label={r.status} />
+                                <Chip label={RealtyStatusMap[r.status]} />
                             </Stack>
                         </ListItem>
                     ))}
-                    {section === 'draft' && realties.filter(r => r.status === 'DRAFT').map((r: any) => (
+                    {section === 'draft' && realties?.filter(r => r.status === 'DRAFT')?.map((r: any) => (
                         <ListItem key={r.id} className="hover:bg-indigo-200 cursor-pointer border-collapse" onClick={() => router.push(`/my-realty/${r.id}`)}> 
                             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                                 <ListItemAvatar>
@@ -100,7 +119,7 @@ export default function MyRealty() {
                                     />
                                 </ListItemAvatar>
                                 <Typography>{r.title}</Typography>
-                                <Chip label={r.status} />
+                                <Chip label={RealtyStatusMap[r.status]} />
                             </Stack>
                         </ListItem>
                     ))}
