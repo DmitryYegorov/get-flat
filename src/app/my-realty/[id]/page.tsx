@@ -242,8 +242,15 @@ const MyRealtySettings = ({ params }) => {
                 <CountrySelect
                     onChange={(value) => setValue('location', value)}
                     country={realty.location}
-                    city={realty.city}
+                    city={realty.location.cityName}
                 />
+				<TextField
+					placeholder="Адрес"
+					label="Адрес"
+					multiline
+					rows={2}
+					defaultValue={realty?.address}
+				/>
                 <Map
                     center={location?.latlng}
                 />
@@ -408,7 +415,7 @@ const MyRealtySettings = ({ params }) => {
 <Stack>
 							<div className="flex flex-row gap-8 items-center mt-5">
 								<div>Статус: <Chip label={RealtyStatusMap[realty?.status]}/></div>
-								{['ACTIVE', 'DRAFT'].includes(realty?.status) && (
+								{['ACTIVE', 'DRAFT', 'REJECTED'].includes(realty?.status) && (
 									<>
 										<div style={{width: 150}}>
 											<Button

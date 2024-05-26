@@ -89,6 +89,7 @@ const RentModal = () => {
     const hasBreakfast = watch('hasBreakfast');
     const hasLunch = watch('hasLunch');
     const hasDinner = watch('hasDinner');
+	const address = watch('address');
 
     const setCustomValue = (id: string, value: any) => {
         setValue(id, value, {
@@ -107,10 +108,10 @@ const RentModal = () => {
 
     const actionLabel = useMemo(() => {
         if (step === STEPS.PRICE) {
-            return 'Create';
+            return 'Готово';
         }
 
-        return 'Next';
+        return 'Дальше';
     }, [step]);
 
     const secondaryActionLabel = useMemo(() => {
@@ -118,7 +119,7 @@ const RentModal = () => {
             return undefined;
         }
 
-        return 'Back';
+        return 'Назад';
     }, [step]);
 
     const getCategoriesList = useCallback(async () => {
@@ -140,8 +141,8 @@ const RentModal = () => {
     let bodyContent = (
         <div className="flex flex-col gap-8">
             <Heading
-                title={"Which is best describes your place?"}
-                subtitle="Pick a category"
+                title={"Как лучше всего можно описать ваше место?"}
+                subtitle="Кликните на подходящий вариент"
             />
             <div
                 className="
@@ -184,10 +185,20 @@ const RentModal = () => {
                 <CountrySelect
                     onChange={(value) => setCustomValue('location', value)}
                     country={location}
+					city={location.cityName}
                 />
                 <Map
                     center={location?.latlng}
                 />
+
+				<TextField
+					multiline
+					rows={3}
+					placeholder="Адрес"
+					label="Адрес"
+					onChange={(e) => setCustomValue('address', e.target.value)}
+					value={address}
+				/>
             </div>
         );
     }

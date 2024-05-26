@@ -6,7 +6,7 @@ import Container from "../components/Container";
 import { getCurrentUser } from "../http/auth";
 import { getUserBookings } from "../http/bookings";
 import Heading from "../components/Heading";
-import { Paper, Stack } from "@mui/material";
+import { Link, Paper, Stack } from "@mui/material";
 import Image from "next/image";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -45,6 +45,19 @@ const MyBookingsPage = () => {
                     title="Ваши поездки"
                 />
                 <Stack spacing={2} marginTop={2}>
+					{trips?.length == 0 && (
+						<Stack className="border-solid border-[3px] border-indigo-500 p-3 rounded-xl flex-col items-center w-[70vw]" style={{margin: '0 auto'}}>
+							<Heading
+								title="У вас пока что не было подтвержденных брованирований"
+								center
+								subtitle="Вы можете выбрать то что вам понравиться на главной странице нашего сайта :)"
+							/>
+
+							<div>
+								<Link href="/">На главную</Link>
+							</div>
+						</Stack>
+					)}
                     {trips?.map(b => (
                         <>
                             <div

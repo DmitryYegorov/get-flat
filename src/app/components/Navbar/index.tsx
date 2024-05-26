@@ -25,7 +25,7 @@ const Navbar = () => {
                     "
                 >
                     <Logo />
-                    <Search />
+                    {/* <Search /> */}
                     <UserMenu />
                 </div>
             </Container>

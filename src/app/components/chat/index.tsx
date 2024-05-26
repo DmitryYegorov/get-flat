@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import "react-chat-elements/dist/main.css"
-import { MessageList, Input, Button } from 'react-chat-elements';
+import { MessageList } from 'react-chat-elements';
 import { indigo } from "@mui/material/colors";
 import { getBookingById } from "@get-flat/app/http/bookings";
 import { http } from "@get-flat/app/http";
 import io from 'socket.io-client';
 import { useForm } from "react-hook-form";
-import { TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 
 
 interface Props {
@@ -31,6 +31,7 @@ const ChatLayout: React.FC<Props> = ({
     const [open, setOpen] = useState(isOpen);
     const [messages, setMessages] = useState<any>([]);
     const [newMessage, setNewMessage] = useState('');
+	const [booking, setBooking] = useState<any>(null);
 
     const {
         setValue,
@@ -48,6 +49,12 @@ const ChatLayout: React.FC<Props> = ({
                     const m = res.data;
                     setMessages(m);
                 });
+
+			getBookingById(bookingId)
+				.then(res => {
+					const data = res.data;
+					setBooking(res);
+				})
         }
     }, [bookingId, isOpen, open]);
 
@@ -146,7 +153,7 @@ const ChatLayout: React.FC<Props> = ({
                         <IoMdClose size={18} />
                     </button>
 
-                    <div className="font-semibold">{user.firstName}</div>
+                    <div className="font-semibold">Чат с владельцем {booking?.realty?.tittle} {user.firstName}</div>
                 </div>
                 <div
                     className={`
@@ -164,24 +171,24 @@ const ChatLayout: React.FC<Props> = ({
                             })}
                         />
                         <hr/>
-                        <div className="flex p-2 relative flex-row items-center" style={{
-                            maxWidth: "90%"
-                        }}>
+                        <Stack spacing={2} direction={'row'} style={{margin: '10px'}}>
                                 <TextField
                                     placeholder="Напишите сообщение..."
                                     multiline
-                                    rows={5}
+                                    rows={4}
                                     onChange={(e) => setValue('text', e.target.value)}
                                     value={text}
                                     fullWidth
                                 />
                                 <Button
-                                    text={"Отправить"}
-                                    title="Отправить"
-                                    backgroundColor={indigo[500]}
+                                    // backgroundColor={indigo[500]}
+									variant="contained"
                                     onClick={sendMessage}
-                                />
-                        </div>
+									style={{
+										height: '60px'
+									}}
+                                >Отправить</Button>
+                        </Stack>
                     </div>
                 </div>
             </div>

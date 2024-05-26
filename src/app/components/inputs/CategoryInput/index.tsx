@@ -7,7 +7,7 @@ interface Props {
     label: string;
     icon?: string;
     selected?: boolean;
-    categoryId: string;
+    categoryId: string | null;
 }
 
 const CategoryInput: React.FC<Props> = ({

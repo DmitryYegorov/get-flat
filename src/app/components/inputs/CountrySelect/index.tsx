@@ -22,7 +22,6 @@ export type CountrySelectValue = {
 
 const CountrySelect: React.FC<Props> = ({
     country,
-    city,
     onChange,
 }: Props) => {
 
@@ -30,7 +29,7 @@ const CountrySelect: React.FC<Props> = ({
     const { getAllByCountry, getCities } = useCities();
 
     const [selectedCountry, setSelectedCountry] = useState(country);
-    const [selectedCity, setSelectedCity] = useState(city);
+    const [selectedCity, setSelectedCity] = useState(null);
 
     useEffect(() => {
         onChange({
@@ -41,6 +40,11 @@ const CountrySelect: React.FC<Props> = ({
             cityName: selectedCity?.label,
             latlng: selectedCity ? selectedCity?.latlng : selectedCountry?.latlng,
         } as CountrySelectValue);
+
+		// if (country?.cityName && !selectedCity) {
+		// 	setSelectedCity(getCities().find(c => c.label === country.cityName));
+		// 	console.log(selectedCity);
+		// }
     }, [selectedCity, selectedCountry]);
 
     return (
@@ -86,7 +90,7 @@ const CountrySelect: React.FC<Props> = ({
                     placeholder="Город"
                     isClearable
                     options={selectedCountry ? getAllByCountry(selectedCountry?.code) : getCities()}
-                    value={selectedCity}
+                    value={getCities().find(c => c.label === country?.cityName)}
                     onChange={(city) => {
                         console.log(city);
                         setSelectedCity(city);

@@ -326,33 +326,34 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                                             <Stack direction='column' spacing={1}>
                                                 <List className="font-semibold text-lg">
                                                     <ListItem>{realty?.location?.flag} {realty?.location?.label} {realty?.location.cityName}</ListItem>
+													<ListItem>{realty?.address}</ListItem>
                                                     <ListItem>{realty?.price} $ за ночь</ListItem>
                                                     <ListItem>{realty?.address}</ListItem>
                                                 </List>
                                                 <hr />
-                                                <CustomProvider locale={ruRu}>
-                                                <DateRangePicker
-                                                    label={"Когда хотите отдохнуть здесь?"}
-                                                    defaultCalendarValue={[startDate, endDate]}
-                                                    onChange={(value) => {
-                                                        const [startDate, endDate] = value!;
-                                                        setValue('startDate', startDate);
-                                                        setValue('endDate', endDate);
-                                                    }}
-                                                    format="dd/MM/yyyy"
-                                                    appearance="subtle"
-                                                    placement="top"
-                                                    shouldDisableDate={(date) => {
-                                                        const slots = new Set(realty?.slots.map((slot) => dayjs(slot).format('YYYY-MM-DD')) || []);
-                                                        const isSlot = slots.has(dayjs(date).format('YYYY-MM-DD'));
-                                                        const formattedBookings = booked.map(b => dayjs(b).format('YYYY-MM-DD'));
-                                                        const isBooked = formattedBookings.includes(dayjs(date).format('YYYY-MM-DD'));
+												<CustomProvider locale={ruRu}>
+													<DateRangePicker
+														label={"Когда хотите отдохнуть здесь?"}
+														defaultCalendarValue={[startDate, endDate]}
+														onChange={(value) => {
+															const [startDate, endDate] = value!;
+															setValue('startDate', startDate);
+															setValue('endDate', endDate);
+														}}
+														format="dd/MM/yyyy"
+														appearance="subtle"
+														placement="top"
+														shouldDisableDate={(date) => {
+															const slots = new Set(realty?.slots.map((slot) => dayjs(slot).format('YYYY-MM-DD')) || []);
+															const isSlot = slots.has(dayjs(date).format('YYYY-MM-DD'));
+															const formattedBookings = booked.map(b => dayjs(b).format('YYYY-MM-DD'));
+															const isBooked = formattedBookings.includes(dayjs(date).format('YYYY-MM-DD'));
 
-                                                        return isBooked || !isSlot;
-                                                    }}
-                                                    placeholder="Даты въезда и выезда"
-                                                />
-                                                </CustomProvider>
+															return isBooked || !isSlot;
+														}}
+														placeholder="Даты въезда и выезда"
+													/>
+												</CustomProvider>
                                             </Stack>
                                             <Button
                                                 variant="contained"

@@ -12,15 +12,11 @@ import { AiOutlineProfile } from "react-icons/ai";
 import { getCurrentUser } from "@get-flat/app/http/auth";
 import { MdAccountBalance, MdDateRange, MdOutlinePerson4 } from "react-icons/md";
 import { BsPassport } from "react-icons/bs";
-import { BiCommentDetail, BiMailSend, BiMessageSquare, BiPhoneCall } from "react-icons/bi";
-import Link from "next/link";
+import { BiCommentDetail, BiMailSend, BiPhoneCall } from "react-icons/bi";
 import { TbMessageCircle2Filled } from "react-icons/tb";
 import Chat from "@get-flat/app/components/chat";
-import { MessageList } from "react-chat-elements"
-import { Input as ChatInput } from 'react-chat-elements'
-import { Button } from "react-chat-elements";
-import { indigo } from "@mui/material/colors";
 import dict from "@get-flat/app/conts";
+import MyButton from "@get-flat/app/components/Button";
 
 const MyBookingDetails = ({ params }) => {
 
@@ -30,22 +26,18 @@ const MyBookingDetails = ({ params }) => {
     const [chatOpen, setChatOpen] = useState(false);
 
     useEffect(() => {
-        if (booking == null) {
             getBookingById(params.id)
                 .then(res => {
                     const booking = res.data;
                     setBooking(booking);
                 })
-        }
 
-        if (currentUser == null) {
             getCurrentUser()
                 .then(res => {
                     const user = res.data?.payload?.user;
                     setCurrentUser(user);
                 })
-        }
-    }, [booking, currentUser, params]);
+    }, [params]);
 
     return (
         <ClientOnly>
@@ -103,10 +95,6 @@ const MyBookingDetails = ({ params }) => {
                                     <ListItemText>{booking?.guestCount} чел. {booking?.childrenCount && `+ ${booking?.childrenCount} детей`}</ListItemText>
                                 </ListItem>
                                 <ListItem>
-                                    <ListItemIcon><BsPassport /></ListItemIcon>
-                                    <ListItemText>{dict.get(booking?.documentType)}, №{booking?.documentId}</ListItemText>
-                                </ListItem>
-                                <ListItem>
                                     <ListItemIcon><BiCommentDetail /></ListItemIcon>
                                     <ListItemText>Пожелания: {booking?.comment || '-'}</ListItemText>
                                 </ListItem>
@@ -118,15 +106,14 @@ const MyBookingDetails = ({ params }) => {
                                 <List>
                                     <ListItem>
                                         <ListItemIcon><BiPhoneCall /></ListItemIcon>
-                                        <ListItemText>{booking?.realty?.phoneNumber}</ListItemText>
+                                        <ListItemText>{booking?.realty?.phoneNumber || booking?.realty?.owner?.phoneNumber}</ListItemText>
                                     </ListItem>
                                     <ListItem>
                                         <ListItemIcon><BiMailSend /></ListItemIcon>
-                                        <ListItemText>{booking?.realty?.email}</ListItemText>
+                                        <ListItemText>{booking?.realty?.email || booking?.realty?.owner?.email}</ListItemText>
                                     </ListItem>
                                     <ListItem>
-                                        <ListItemIcon><TbMessageCircle2Filled /></ListItemIcon>
-                                        <ListItemText><Link href={"#"} onClick={() => setChatOpen(true)}>Написать сообщение</Link></ListItemText>
+                                        <MyButton onClick={() => setChatOpen(true)} label="Чат с владельцем" />
                                     </ListItem>
                                 </List>
                             </Alert>
@@ -135,7 +122,7 @@ const MyBookingDetails = ({ params }) => {
                 </Paper>
             </Container>
             {!!(booking && currentUser) && (
-                <Chat isOpen={chatOpen} bookingId={booking.id!} user={currentUser} onClose={() => setChatOpen(false)}/>
+                <Chat isOpen={chatOpen} bookingId={booking.id} user={currentUser} onClose={() => setChatOpen(false)}/>
             )}
         </ClientOnly>
     );

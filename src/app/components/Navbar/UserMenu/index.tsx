@@ -25,6 +25,7 @@ export default function UsersMenu() {
                 .then(res => {
                     const u = res.data?.payload?.user;
                     setUser(u);
+					// window.location.reload();
                 })
                 .catch((e) => {
                     localStorage.removeItem('payload');
@@ -32,7 +33,7 @@ export default function UsersMenu() {
                     router.push('/');
                 })
         }
-    }, [user]);
+    }, []);
 
 
     const [isOpen, setOpen] = useState(false);
@@ -49,6 +50,16 @@ export default function UsersMenu() {
         return rentModal.onOpen();
 
     }, [user, loginModal, rentModal]);
+
+	const logout = () => {
+		if (!user) {
+			return;
+		}
+
+		localStorage.removeItem('payload');
+		localStorage.removeItem('accessToken');
+		window.location.reload();
+	}
 
     return <div
         className="relative"
@@ -177,9 +188,9 @@ export default function UsersMenu() {
                             />
                             <hr/>
                             <MenuItem
-                            onClick={() => loginModal.onOpen() }
-                            label="Выйти"
-                        />
+								onClick={() => logout() }
+								label="Выйти"
+                       		 />
                         </>
                     )}
                 </div>

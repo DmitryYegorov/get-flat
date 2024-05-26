@@ -116,7 +116,7 @@ const RealtyCard: React.FC<Props> = ({
                 <div className="text-xl">{data.title}</div>
                 <div
                     className="font-semibold text-lg"
-                >{location?.flag} {location?.region}, {location?.label}</div>
+                >{location?.flag} {location?.label} {location.city ? `, ${location.city}` : ''}</div>
                 <div className="font-light text-neutral-500">{data.category.name}</div>
                 <div className="font-light text-neutral-500 flex items-center gap-2"><MdStarBorder  size={18}/> {data?.rating || 0}</div>
                 <div className="flex flex-row items-center gap-1">

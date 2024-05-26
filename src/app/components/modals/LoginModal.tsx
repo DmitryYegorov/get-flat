@@ -48,7 +48,12 @@ const LoginModal = () => {
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('payload', JSON.stringify(payload));
 
-                toast.success(`Авторизация прошла успешно! Приятного пользования, ${data?.payload?.user?.lastName} :)`);
+                setTimeout(() => {
+					window.location.reload();
+				}, 1000);
+
+				toast.success(`Авторизация прошла успешно! Приятного пользования, ${data?.payload?.user?.lastName} :)`);
+
                 loginModal.onClose();
             })
             .catch((error) => {

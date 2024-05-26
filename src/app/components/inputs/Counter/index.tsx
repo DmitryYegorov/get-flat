@@ -9,6 +9,7 @@ interface Props {
     value: number;
     onChange: (value: number) => void;
     max?: number;
+	min?: number;
 }
 
 const Counter: React.FC<Props> = ({
@@ -17,22 +18,24 @@ const Counter: React.FC<Props> = ({
     value,
     onChange,
     max,
+	min = 0
 }: Props) => {
     const onAdd = useCallback(() => { 
+		console.log('onAdd')
         if (max != null && value === max) {
             return;
         }
 
         onChange(value + 1);
-    }, [onChange, value]);
+    }, [onChange, value, max]);
 
     const onReduce = useCallback(() => {
-        if (value === 1) {
+        if (value === min) {
             return;
         }
 
         onChange(value - 1);
-    }, [value, onChange]);
+    }, [value, onChange, min]);
 
     return (
         <div

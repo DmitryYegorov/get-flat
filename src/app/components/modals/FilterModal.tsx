@@ -89,14 +89,6 @@ const FilterModal = () => {
     const categoryId = watch('categoryId');
 
     useEffect(() => {
-        // if (location != null) {
-        //     filterModal.setParams({
-        //         ...filterModal.params,
-        //         city,
-        //         location,
-        //     });
-        // }
-
         filterModal.setParams({
             ...filterModal.params,
             location,
@@ -109,7 +101,6 @@ const FilterModal = () => {
             categoryId,
         })
 
-        console.log('filter', filterModal.params);
     }, [location, city, guestCount, childrenCount, hasParking, hasPlayground, isAccessible, categoryId]);
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
