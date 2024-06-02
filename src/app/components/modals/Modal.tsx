@@ -99,7 +99,7 @@ const Modal: React.FC<Props> = ({
                     md:h-auto
                 "
 
-                style={{width}}
+                style={{width, maxHeight: '80%'}}
             >
                 {/** Content */}
                 <div
@@ -110,6 +110,7 @@ const Modal: React.FC<Props> = ({
                         ${showModal ? `translate-y-0` : 'translate-y-full'}
                         ${showModal ? `opacity-100` : 'opasity-0'}
                     `}
+					
                 >
                     <div
                         className="

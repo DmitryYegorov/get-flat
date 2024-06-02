@@ -10,6 +10,7 @@ import { http } from "@get-flat/app/http";
 import io from 'socket.io-client';
 import { useForm } from "react-hook-form";
 import { Button, Stack, TextField } from "@mui/material";
+import {BrowserView, MobileView} from "react-device-detect";
 
 
 interface Props {
@@ -171,24 +172,46 @@ const ChatLayout: React.FC<Props> = ({
                             })}
                         />
                         <hr/>
-                        <Stack spacing={2} direction={'row'} style={{margin: '10px'}}>
-                                <TextField
-                                    placeholder="Напишите сообщение..."
-                                    multiline
-                                    rows={4}
-                                    onChange={(e) => setValue('text', e.target.value)}
-                                    value={text}
-                                    fullWidth
-                                />
-                                <Button
-                                    // backgroundColor={indigo[500]}
-									variant="contained"
-                                    onClick={sendMessage}
-									style={{
-										height: '60px'
-									}}
-                                >Отправить</Button>
-                        </Stack>
+                        <BrowserView>
+							<Stack spacing={2} direction={'row'} style={{margin: '10px'}}>
+									<TextField
+										placeholder="Напишите сообщение..."
+										multiline
+										rows={4}
+										onChange={(e) => setValue('text', e.target.value)}
+										value={text}
+										fullWidth
+									/>
+									<Button
+										// backgroundColor={indigo[500]}
+										variant="contained"
+										onClick={sendMessage}
+										style={{
+											height: '60px'
+										}}
+									>Отправить</Button>
+							</Stack>
+						</BrowserView>
+						<MobileView>
+							<Stack spacing={2} direction={'column'} style={{margin: '10px', maxHeight: '400px'}} height={5}>
+									<TextField
+										placeholder="Напишите сообщение..."
+										multiline
+										rows={4}
+										onChange={(e) => setValue('text', e.target.value)}
+										value={text}
+										fullWidth
+									/>
+									<Button
+										// backgroundColor={indigo[500]}
+										variant="contained"
+										onClick={sendMessage}
+										style={{
+											height: '60px'
+										}}
+									>Отправить</Button>
+							</Stack>
+						</MobileView>
                     </div>
                 </div>
             </div>

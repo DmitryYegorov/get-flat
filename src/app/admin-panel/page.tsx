@@ -15,6 +15,7 @@ import TextHeader from "../components/TextHeader";
 import ImageSettings from "../my-realty/components/ImageSettings";
 import {RealtyStatusMap, UserStatusMap} from "../maps";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { isMobile } from 'react-device-detect';
 
 
 enum Sections {
@@ -515,7 +516,7 @@ const AdminPanel = () => {
 		<ClientOnly>
 			<Container>
 				<Grid container spacing={2}>
-					<Grid item xs={3}>
+					<Grid item xs={isMobile ? 12 : 3}>
 						<List className="border-solid border-indigo-200 border-[1px] rounded-md">
 							<ListItem>
 								<ListItemButton onClick={() => setCurrentSection(Sections.REVIEWS)}>
@@ -534,7 +535,7 @@ const AdminPanel = () => {
 							</ListItem>
 						</List>
 					</Grid>
-					<Grid item xs={9}>
+					<Grid item xs={isMobile ? 12 : 9}>
 						{bodyContent}
 					</Grid>
 				</Grid>

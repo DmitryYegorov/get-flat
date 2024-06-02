@@ -10,6 +10,7 @@ import useRentModal from "@get-flat/app/hooks/useRentModal";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "@get-flat/app/http/auth";
 import Button from "../../Button";
+import {isMobile} from "react-device-detect";
 
 export default function UsersMenu() {
     const registerModal = useRegisterModule();
@@ -95,7 +96,7 @@ export default function UsersMenu() {
 					onClick={onRent}
 					disabled={user?.status === 'PUBLICATIONS_BLOCKED'}
 				/>
-			) : (<div style={{
+			) : !isMobile && (<div style={{
 				width: 300
 			}}></div>)}
 			<div></div>

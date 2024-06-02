@@ -8,7 +8,7 @@ import EmptyState from "./components/EmptyState";
 import RealtyCard from "./components/realties/RealtyCard";
 import { getCurrentUser } from "./http/auth";
 import useFilter from "./hooks/useFilterModal";
-import {AccordionSummary, Grid, Stack, Accordion, AccordionDetails, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, TextField} from "@mui/material";
+import {AccordionSummary, Grid, Stack, Accordion, AccordionDetails, FormControlLabel, Checkbox, FormControl, InputLabel, Select, MenuItem, TextField, Typography} from "@mui/material";
 import Heading from "./components/Heading";
 import CountrySelect from "./components/inputs/CountrySelect";
 import {FieldValues, useForm} from "react-hook-form";
@@ -20,6 +20,9 @@ import Button from "./components/Button";
 import {CustomProvider, DateRangePicker} from "rsuite";
 import 'rsuite/dist/rsuite.min.css';
 import ruRu from 'rsuite/locales/ru_RU'
+import {BrowserView, isMobile, MobileView} from 'react-device-detect';
+import {IoFilterCircleOutline} from "react-icons/io5";
+import {indigo} from "@mui/material/colors";
 
 
 function Home() {
@@ -27,6 +30,8 @@ function Home() {
 	const [realties, setRealties] = useState([]);
 	const [currentUser, setCurrentUser] = useState(null);
 	const [categories, setCategories] = useState([]);
+
+
 
     useEffect(() => {
         if (!categories?.length) {
@@ -144,12 +149,10 @@ function Home() {
 //     );
 //   }
 
-  return (
-    <ClientOnly>
-      <Container>
-        <Grid container spacing={2}>
-			<Grid item xs={3}>
-				<Stack>
+  console.log({isMobile});
+
+  const Filters = (
+	<Stack>
 					<div className="mb-1 mt-1">
 						<Button label="Сбросить фильтр" onClick={() => {
 							window.location.reload();
@@ -360,8 +363,30 @@ function Home() {
 						</AccordionDetails>
 					</Accordion>
 				</Stack>
+  )
+
+  return (
+    <ClientOnly>
+      <Container>
+        <Grid container spacing={2}>
+			<Grid item xs={isMobile ? 12 : 3}>
+				<BrowserView>
+					{Filters}
+				</BrowserView>
+				<MobileView>
+					<Accordion>
+						<AccordionSummary expandIcon={<IoFilterCircleOutline size={24} color={indigo[800]} />}>
+							<Typography variant="h6" color={indigo[800]} style={{borderBottom: `3px solid ${indigo[800]}`}} >
+								Фильтр
+							</Typography>
+						</AccordionSummary>
+						<AccordionDetails>
+							{Filters}
+						</AccordionDetails>
+					</Accordion>
+				</MobileView>
 			</Grid>
-			<Grid item xs={9}>
+			<Grid item xs={isMobile ? 12 : 9}>
 				<div
 					className="
 						grid
