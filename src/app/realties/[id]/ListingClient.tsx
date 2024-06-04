@@ -153,8 +153,8 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                     </div>
                 )}
             </div>
-            <Grid container spacing={1} marginTop={1}>
 				<BrowserView>
+            <Grid container spacing={1} marginTop={1}>
 
                 <Grid item xs={isMobile ? 12 : 8}>
                     <Paper style={{padding: 10, border: '1px solid #ececee'}} elevation={0}>
@@ -400,8 +400,11 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
                             </Box>
                     </Paper>
                 </Grid>
+				</Grid>
 				</BrowserView>
 				<MobileView>
+
+				<Grid container spacing={1} marginTop={1}>
 					<Grid item xs={isMobile ? 12 : 4}>
 						<Paper style={{padding: 10}}>
 								<Box>
@@ -647,8 +650,8 @@ const ListingClient: React.FC<Props> = ({realty, bookings}) => {
 							</Stack>
 						</Paper>
 					</Grid>
+				</Grid>
 				</MobileView>
-            </Grid>
         </Container>
      );
 }
